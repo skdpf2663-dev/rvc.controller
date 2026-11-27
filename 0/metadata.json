@@ -1,0 +1,47 @@
+{
+  "cli_version": "0.13.4",
+  "checkpoint_id": "01M8E3CDGT4P8YPB7T7Z09SYE1",
+  "session_id": "4523ad41-1270-5a03-8e95-fd2d753a8ea1",
+  "strategy": "manual-commit",
+  "created_at": "2026-11-27T08:54:07.104670256Z",
+  "branch": "claude/project-thread-eyvrri",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "simulator/build.sh",
+    "simulator/wasm/rvc_wasm.c"
+  ],
+  "agent": "Claude Code",
+  "model": "claude-opus-5-5",
+  "turn_id": "be26088dd1b7",
+  "checkpoint_transcript_start": 455,
+  "transcript_lines_at_start": 455,
+  "compact_transcript_start": 81,
+  "token_usage": {
+    "input_tokens": 32,
+    "cache_creation_tokens": 222935,
+    "cache_read_tokens": 3930095,
+    "output_tokens": 14707,
+    "api_call_count": 17
+  },
+  "session_token_usage": {
+    "input_tokens": 161,
+    "cache_creation_tokens": 407179,
+    "cache_read_tokens": 14368535,
+    "output_tokens": 96878,
+    "api_call_count": 85
+  },
+  "redaction": {
+    "replacements": 156,
+    "layers": {
+      "betterleaks": 0,
+      "connection_string": 0,
+      "credential_key": 0,
+      "credential_value": 0,
+      "credentialed_uri": 0,
+      "entropy": 144,
+      "key_context": 12,
+      "provider_token": 0,
+      "shell_stdin": 0
+    }
+  }
+}
