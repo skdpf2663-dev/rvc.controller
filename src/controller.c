@@ -45,15 +45,26 @@ static void enter_forward(void)
     set_commands(DIR_FORWARD, CLEAN_ON);
 }
 
+/* Obstacle avoidance shared by Forward and the end of clean_up:
+ * left turn has priority (PR-9); with every side blocked the RVC backs up (PR-4).
+ * Called only when the front is blocked. */
+static void avoid_front_obstacle(const SensorValues *in, bool dust_for_turn)
+{
+    if (!in->left) {
+        start_turn(STATE_TURN_LEFT, dust_for_turn);
+    } else if (!in->right) {
+        start_turn(STATE_TURN_RIGHT, dust_for_turn);
+    } else {
+        enter_backward();
+    }
+}
+
 static void step_forward(const SensorValues *in)
 {
-    if (in->front && !in->left) {
-        start_turn(STATE_TURN_LEFT, in->dust);
-    } else if (in->front && in->left && !in->right) {
-        start_turn(STATE_TURN_RIGHT, in->dust);
-    } else if (in->front && in->left && in->right) {
-        enter_backward();
-    } else if (!in->front && in->dust) {
+    if (in->front) {
+        /* Interpretation 5: a front obstacle is handled before dust. */
+        avoid_front_obstacle(in, in->dust);
+    } else if (in->dust) {
         start_cleanup(STATE_CLEANUP_FORWARD);
     } else {
         enter_forward();
@@ -76,9 +87,10 @@ static void step_turn(void)
 
 static void step_backward(const SensorValues *in)
 {
+    /* Interpretation 9: a clear side is handled before dust. */
     if (!in->left) {
         start_turn(STATE_TURN_LEFT, in->dust);
-    } else if (in->left && !in->right) {
+    } else if (!in->right) {
         start_turn(STATE_TURN_RIGHT, in->dust);
     } else if (in->dust) {
         start_cleanup(STATE_CLEANUP_BACKWARD_PAUSE);
@@ -102,27 +114,18 @@ static void step_cleanup(const SensorValues *in)
     const bool activation_ended = (ctl.cleanup_count == CLEANUP_TICKS || !in->dust);
     const bool is_forward = (ctl.state == STATE_CLEANUP_FORWARD);
 
-    if (!activation_ended && is_forward && in->front) {
-        /* PR-15: front obstacle during clean_up stops in place, same activation. */
-        ctl.state = STATE_CLEANUP_STOPPED;
+    if (!activation_ended) {
         ctl.cleanup_count++;
-        set_commands(DIR_STOP, CLEAN_UP);
-    } else if (!activation_ended && is_forward && !in->front) {
-        ctl.cleanup_count++;
-        set_commands(DIR_FORWARD, CLEAN_UP);
-    } else if (!activation_ended && !is_forward) {
-        ctl.cleanup_count++;
-        set_commands(DIR_STOP, CLEAN_UP);
-    } else if (in->dust && (!is_forward || in->front)) {
-        start_cleanup(STATE_CLEANUP_STOPPED);
-    } else if (in->dust && !in->front) {
-        start_cleanup(STATE_CLEANUP_FORWARD);
-    } else if (in->front && !in->left) {
-        start_turn(STATE_TURN_LEFT, false);
-    } else if (in->front && in->left && !in->right) {
-        start_turn(STATE_TURN_RIGHT, false);
-    } else if (in->front && in->left && in->right) {
-        enter_backward();
+        if (is_forward && in->front) {
+            /* PR-15: front obstacle during clean_up stops in place, same activation. */
+            ctl.state = STATE_CLEANUP_STOPPED;
+        }
+        set_commands(ctl.state == STATE_CLEANUP_FORWARD ? DIR_FORWARD : DIR_STOP, CLEAN_UP);
+    } else if (in->dust) {
+        /* Next activation: stopped if already stopped or the front is blocked. */
+        start_cleanup((!is_forward || in->front) ? STATE_CLEANUP_STOPPED : STATE_CLEANUP_FORWARD);
+    } else if (in->front) {
+        avoid_front_obstacle(in, false);
     } else {
         enter_forward();
     }
