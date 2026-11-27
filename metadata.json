@@ -1,0 +1,42 @@
+{
+  "cli_version": "0.13.4",
+  "checkpoint_id": "01M8E3GPGKBADH5D1RYSFCEDYC",
+  "strategy": "manual-commit",
+  "branch": "claude/project-thread-eyvrri",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "simulator/run_scenarios.js",
+    "simulator/web/scenarios.js",
+    "simulator/web/sim-core.js"
+  ],
+  "sessions": [
+    {
+      "metadata": "/0/metadata.json",
+      "transcript": "/0/full.jsonl",
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "prompt": ""
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 7,
+    "cache_creation_tokens": 22453,
+    "cache_read_tokens": 1059264,
+    "output_tokens": 16910,
+    "api_call_count": 4
+  },
+  "redaction": {
+    "replacements": 158,
+    "layers": {
+      "betterleaks": 0,
+      "connection_string": 0,
+      "credential_key": 0,
+      "credential_value": 0,
+      "credentialed_uri": 0,
+      "entropy": 146,
+      "key_context": 12,
+      "provider_token": 0,
+      "shell_stdin": 0
+    }
+  }
+}
