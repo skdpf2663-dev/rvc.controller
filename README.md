@@ -13,6 +13,7 @@ Statement / Branch / MC/DC 커버리지 90% 이상이 될 때까지 테스트를
 | 커버리지 반복 기록 | `reports/coverage-1.md` → `coverage-2.md` → `coverage-3.md` |
 | 최종 커버리지 | Statement 98.8%, Branch 99.2%, MC/DC 100% |
 | 테스트 분류표, 모듈 추적표 | `artifacts/Implementation/test_report.md`, `module_traceability.md` |
+| 웹 시뮬레이터 (시스템 테스트, 사람 판정) | `simulator/dist/rvc-simulator.html` (브라우저로 열기), 시나리오 21개 `artifacts/SystemTest/` |
 | AI 동작 과정 기록 | `docs/ai-process-log.md`, `docs/entire-checkpoints/`, 커밋별 `Entire-Checkpoint:` |
 
 ### 빌드와 테스트

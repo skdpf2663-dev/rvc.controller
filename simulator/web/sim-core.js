@@ -65,7 +65,7 @@
   }
 
   class Simulation {
-    constructor(wasmExports) { this.c = wasmExports; }
+    constructor(wasmExports) { this.c = wasmExports; this.history = []; this.maxTicks = MAX_TICKS; }
 
     /* initialize(configuration) / reset(): restores controller and map. */
     reset(config) {

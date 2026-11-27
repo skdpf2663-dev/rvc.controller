@@ -50,3 +50,14 @@
   이번 프롬프트(구현 + 커버리지 테스트)의 범위를 넘어 만들지 않음. 대신 `rvc` 실행 파일이 tick마다
   전체 상태를 한 줄로 출력하므로 시뮬레이터가 실제 C 제어기를 그대로 구동할 수 있게 해 둠.
 - 원래 프로젝트 규칙의 "단계마다 사람 승인"은 PR 리뷰로 대신함. 설계 편차는 module_traceability.md에 정리.
+
+## 6단계. 후속 요청: Entire 원본 내보내기 + 웹 시뮬레이터 (2026-11-27)
+- 사용자 요청: "웹시뮬레이터 붙여주고 entire원본은 1번으로 해줘".
+- Entire: 작업 공간이 정리되기 전에 `refs/entire/*` 를 git bundle로 먼저 내보냄(프로젝트 파일
+  `entire-export/`). PC에서 `git fetch <bundle> 'refs/entire/*:refs/entire/*'` → `git push origin 'refs/entire/*'`.
+- 시뮬레이터 설계 결정: 원래 스킬의 "JS로 제어 로직을 다시 만들지 말 것"을 지키기 위해 `src/` 를 그대로
+  clang wasm32로 컴파일(libc 없이 빌드되도록 memcpy/memset만 다리 파일에 제공). JS는 환경만 모델링.
+- 검증: 시나리오 21개를 headless로 돌리고, 같은 센서 입력을 네이티브 GCC 빌드(`build/rvc`)에 넣어 매 tick
+  상태와 명령이 같은지 비교 → 전부 일치, 요구사항 점검 표시 0건. Playwright로 화면 조작 확인 중
+  `sim.history` 초기화 누락 버그를 발견해 수정.
+- 판정(PASS/FAIL)은 스킬 규칙대로 사람 몫으로 남김(`artifacts/SystemTest/test_results.md` 는 Pending).
