@@ -1,0 +1,768 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RVC Simulator</title>
+<style>:root { --bg:#f6f7f9; --panel:#fff; --ink:#1d2330; --muted:#5d6675; --line:#dde1e7; --accent:#2f6fde;
+  --obstacle:#3a4150; --dust:#c48a2c; --trail:#e3ecfb; --start:#2fa36b; --bad:#c43c3c; --hl:#fff3c4; }
+@media (prefers-color-scheme: dark) { :root { --bg:#14171c; --panel:#1d2129; --ink:#e6e9ef; --muted:#9aa3b2; --line:#2e3440;
+  --obstacle:#8a93a5; --dust:#e0a84a; --trail:#24324a; --start:#4cc38a; --bad:#ff7070; --hl:#4a4320; } }
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--ink); font:14px/1.45 system-ui, -apple-system, "Segoe UI", "Malgun Gothic", sans-serif; }
+header { padding:14px 20px 4px; } h1 { font-size:20px; margin:0; } .sub { color:var(--muted); margin:4px 0 0; }
+main { display:grid; grid-template-columns: minmax(300px, 420px) minmax(300px, 1fr) minmax(300px, 1fr); gap:14px; padding:14px 20px 24px; }
+.panel { background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:12px 14px; min-width:0; }
+.panel.wide { grid-column: 1 / -1; }
+.panel-head { display:flex; justify-content:space-between; align-items:center; }
+h2 { font-size:15px; margin:4px 0 10px; } h3 { font-size:14px; margin:14px 0 6px; }
+#grid { display:grid; grid-template-columns:repeat(10, 1fr); gap:2px; aspect-ratio:1; max-width:400px; }
+.cell { position:relative; background:var(--bg); border:1px solid var(--line); border-radius:3px; display:flex; align-items:center; justify-content:center; font-size:11px; user-select:none; }
+.cell.trail { background:var(--trail); } .cell.obstacle { background:var(--obstacle); border-color:var(--obstacle); }
+.cell .dust { position:absolute; inset:18%; border-radius:50%; background:var(--dust); opacity:.85; color:#fff; font-weight:600; display:flex; align-items:center; justify-content:center; }
+.cell.start { outline:2px dashed var(--start); outline-offset:-3px; }
+.cell .rvc { position:absolute; inset:8%; border-radius:50%; background:var(--accent); color:#fff; display:flex; align-items:center; justify-content:center; font-size:16px; z-index:2; box-shadow:0 0 0 2px var(--panel); }
+.cell .coord { position:absolute; left:2px; top:0; font-size:8px; color:var(--muted); }
+.editing #grid .cell { cursor:pointer; }
+.legend { color:var(--muted); font-size:12px; margin:8px 0; display:flex; gap:6px; align-items:center; flex-wrap:wrap; }
+.sw { display:inline-block; width:12px; height:12px; border-radius:3px; } .sw.obstacle{background:var(--obstacle);} .sw.dust{background:var(--dust); border-radius:50%;} .sw.trail{background:var(--trail); border:1px solid var(--line);} .sw.start{outline:2px dashed var(--start); outline-offset:-2px;}
+.row { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin:6px 0; } .buttons button { flex:0 0 auto; }
+button, .file-btn { font:inherit; padding:5px 10px; border:1px solid var(--line); background:var(--panel); color:var(--ink); border-radius:6px; cursor:pointer; }
+button.primary { background:var(--accent); color:#fff; border-color:var(--accent); } button:disabled { opacity:.45; cursor:default; }
+input, select, textarea { font:inherit; color:var(--ink); background:var(--bg); border:1px solid var(--line); border-radius:5px; padding:3px 6px; }
+label { display:inline-flex; gap:6px; align-items:center; } .form label { display:flex; margin:6px 0; } .form textarea, .form input { flex:1; }
+.tick { font-size:13px; color:var(--muted); margin:8px 0 12px; } .tick b { color:var(--ink); font-size:16px; }
+table { border-collapse:collapse; width:100%; font-size:13px; } th, td { border-bottom:1px solid var(--line); padding:3px 6px; text-align:left; white-space:nowrap; }
+#inspector th { color:var(--muted); font-weight:500; width:42%; } #inspector td.changed { background:var(--hl); font-weight:600; }
+#inspector td.prev { color:var(--muted); font-size:12px; }
+.table-wrap { max-height:340px; overflow:auto; } #history tr { cursor:pointer; } #history tr.viewing { background:var(--hl); }
+#history tr.flagged td { color:var(--bad); } #history tr.transition td:nth-child(6) { font-weight:700; }
+#history thead th { position:sticky; top:0; background:var(--panel); }
+.error { color:var(--bad); margin-top:8px; } .note { color:var(--muted); font-size:12px; } .flag { color:var(--bad); }
+#scenario-info dl { display:grid; grid-template-columns:max-content 1fr; gap:4px 10px; margin:0; } #scenario-info dt { color:var(--muted); } #scenario-info dd { margin:0; }
+ul { margin:4px 0; padding-left:18px; }
+@media (max-width: 1100px) { main { grid-template-columns: 1fr 1fr; } #map-panel { grid-column: 1 / -1; } }
+@media (max-width: 700px) { main { grid-template-columns: 1fr; padding:10px; } .panel.wide, #map-panel { grid-column:auto; } }
+#control-panel > label:first-of-type { display:flex; flex-direction:column; align-items:stretch; gap:4px; }
+#scenario-select { width:100%; }
+#inspector { table-layout:fixed; } #inspector th, #inspector td { white-space:normal; word-break:break-word; }
+#inspector td.prev { width:28%; }
+</style>
+</head>
+<body>
+<header>
+  <h1>RVC 시스템 테스트 시뮬레이터</h1>
+  <p class="sub">실제 C11 제어기(src/)를 WebAssembly로 실행합니다. 화면은 지도, 센서, 이동만 계산하고 Direction/Clean 결정은 하지 않습니다.</p>
+</header>
+<main>
+  <section class="panel" id="map-panel">
+    <div class="panel-head">
+      <h2>지도</h2>
+      <label class="toggle"><input type="checkbox" id="edit-mode"> 편집 모드</label>
+    </div>
+    <div id="grid" aria-label="10x10 grid"></div>
+    <div class="legend"><span class="sw obstacle"></span>장애물 <span class="sw dust"></span>먼지(숫자=양) <span class="sw trail"></span>지나간 칸 <span class="sw start"></span>시작 위치</div>
+    <div id="edit-tools" hidden>
+      <div class="row">
+        <span>도구:</span>
+        <label><input type="radio" name="tool" value="obstacle" checked> 장애물</label>
+        <label><input type="radio" name="tool" value="dust"> 먼지 +1</label>
+        <label><input type="radio" name="tool" value="start"> 시작 위치</label>
+        <label><input type="radio" name="tool" value="erase"> 지우기</label>
+      </div>
+      <div class="row">
+        <label>시작 방향 <select id="start-heading"><option>N</option><option>E</option><option>S</option><option>W</option></select></label>
+        <label>좌/우/먼지 센서 주기 <select id="side-period"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select> tick</label>
+      </div>
+      <div class="row">
+        <button id="clear-map">지도 비우기</button>
+        <button id="restore-map">시나리오 지도로 되돌리기</button>
+      </div>
+      <div class="row">
+        <input id="custom-name" placeholder="새 시나리오 이름">
+        <button id="save-custom">새 시나리오로 저장</button>
+      </div>
+    </div>
+    <div id="validation" class="error" hidden></div>
+  </section>
+
+  <section class="panel" id="control-panel">
+    <h2>실행</h2>
+    <label>시나리오 <select id="scenario-select"></select></label>
+    <div class="row buttons">
+      <button id="btn-start" class="primary">▶ Start</button>
+      <button id="btn-pause">❚❚ Pause</button>
+      <button id="btn-back" title="저장된 스냅숏 보기 (제어기를 되돌리지 않음)">◀ Step Back</button>
+      <button id="btn-step">Step ▶</button>
+      <button id="btn-reset">Reset</button>
+      <button id="btn-restart">Restart</button>
+    </div>
+    <label>재생 속도 <input type="range" id="speed" min="50" max="1000" step="50" value="300"> <span id="speed-label">300 ms/tick</span></label>
+    <div id="tick-counter" class="tick"></div>
+
+    <h2>상태 확인 (State Inspector)</h2>
+    <table id="inspector"></table>
+    <div id="changes"></div>
+    <div id="checks"></div>
+  </section>
+
+  <section class="panel" id="scenario-panel">
+    <h2>시나리오</h2>
+    <div id="scenario-info"></div>
+    <h3>사람 판정</h3>
+    <p class="note">요구사항 점검 표시는 참고용입니다. PASS / FAIL / INCONCLUSIVE 는 평가자가 정합니다.</p>
+    <div class="form">
+      <label>결과 <select id="eval-result"><option value="">(미판정)</option><option>PASS</option><option>FAIL</option><option>INCONCLUSIVE</option></select></label>
+      <label>평가자 <input id="eval-evaluator"></label>
+      <label>관련 tick <input id="eval-ticks" placeholder="예: 5-8, 12"></label>
+      <label>관찰 내용 <textarea id="eval-notes" rows="3"></textarea></label>
+      <button id="eval-save" class="primary">판정 저장</button> <span id="eval-saved" class="note"></span>
+    </div>
+    <h3>내보내기</h3>
+    <div class="row buttons">
+      <button id="export-results">판정 결과 (.md)</button>
+      <button id="export-trace">실행 기록 (.json)</button>
+      <button id="export-scenarios">사용자 시나리오 (.json)</button>
+      <label class="file-btn">시나리오 불러오기<input type="file" id="import-scenarios" accept=".json" hidden></label>
+      <button id="delete-custom">사용자 시나리오 삭제</button>
+    </div>
+  </section>
+
+  <section class="panel wide" id="history-panel">
+    <h2>실행 기록 (tick별 스냅숏, 행을 누르면 그 tick을 봅니다)</h2>
+    <div class="table-wrap"><table id="history"></table></div>
+  </section>
+</main>
+<script>const RVC_WASM_BASE64 = "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gICAACAAEIaAgIAAEI2AgIAACyQAQQBBfzYCjIiAgABBAEF/NgKIiICAAEGAiICAABCPgICAAAt7AQF/I4CAgIAAQRBrIggkgICAgAAgCCAHQQBHOgAPIAggBkEARzoADiAIIAVBAEc6AA0gCCAEQQBHOgAMIAggA0EARzoACyAIIAJBAEc6AAogCCABQQBHOgAJIAggAEEARzoACCAIQQhqEJCAgIAAIAhBEGokgICAgAALCAAQiYCAgAALNAECfyOAgICAAEEgayIAJICAgIAAIABBCGoQjoCAgAAgACgCCCEBIABBIGokgICAgAAgAQs0AQJ/I4CAgIAAQSBrIgAkgICAgAAgAEEIahCOgICAACAAKAIMIQEgAEEgaiSAgICAACABCzQBAn8jgICAgABBIGsiACSAgICAACAAQQhqEI6AgIAAIAAoAhAhASAAQSBqJICAgIAAIAELNAECfyOAgICAAEEgayIAJICAgIAAIABBCGoQjoCAgAAgAC0AFCEBIABBIGokgICAgAAgAQs0AQJ/I4CAgIAAQSBrIgAkgICAgAAgAEEIahCOgICAACAAKAIYIQEgAEEgaiSAgICAACABCzQBAn8jgICAgABBIGsiACSAgICAACAAQQhqEI6AgIAAIAAoAhwhASAAQSBqJICAgIAAIAELCwBBACgCiIiAgAALCwBBACgCjIiAgAALWwEFfyOAgICAAEEQayIAJICAgIAAIABBDGoQhYCAgAAgAC0ADCEBIAAtAA0hAiAALQAOIQMgAC0ADyEEIABBEGokgICAgAAgBCACQQJ0IAFBA3RyIANBAXRycgsNAEEAIAA2AoiIgIAACw0AQQAgADYCjIiAgAALCx0CAEGACAsIAQAAAAIAAAAAQYgICwj//////////w==";</script>
+<script>/* RVC simulator core (no DOM). Runs the real C controller compiled to
+ * WebAssembly and models only the environment: the 10x10 map, sensor
+ * sampling, movement, and dust removal. It never decides Direction or Clean.
+ * Works in the browser (globalThis.RvcSim) and in Node (module.exports). */
+(function (root) {
+  "use strict";
+
+  const N = 10;
+  const MAX_TICKS = 100;
+  const STATE_NAMES = ["Forward", "CleanUpForward", "CleanUpStopped", "TurnLeft",
+                       "TurnRight", "Backward", "CleanUpBackwardPause"];
+  const DIR_NAMES = ["forward", "backward", "turn_left", "turn_right", "stop"];
+  const CLEAN_NAMES = ["clean_off", "clean_on", "clean_up"];
+  const HEADINGS = ["N", "E", "S", "W"];
+  const VEC = [[0, -1], [1, 0], [0, 1], [-1, 0]];
+
+  function instantiate(wasmBytes) {
+    const module = new WebAssembly.Module(wasmBytes);
+    return new WebAssembly.Instance(module, {}).exports;
+  }
+
+  /* Map format: rows of 10 chars. '.' empty, '#' obstacle, '1'-'9' dust amount. */
+  function parseMap(rows) {
+    if (!Array.isArray(rows) || rows.length !== N) throw new Error("map must have 10 rows");
+    const obstacle = [], dust = [];
+    for (let y = 0; y < N; y++) {
+      const row = rows[y];
+      if (typeof row !== "string" || row.length !== N) throw new Error("row " + y + " must have 10 cells");
+      obstacle.push([]); dust.push([]);
+      for (let x = 0; x < N; x++) {
+        const c = row[x];
+        if (c !== "." && c !== "#" && !(c >= "1" && c <= "9")) throw new Error("invalid cell '" + c + "' at (" + x + "," + y + ")");
+        obstacle[y].push(c === "#");
+        dust[y].push(c >= "1" && c <= "9" ? Number(c) : 0);
+      }
+    }
+    return { obstacle, dust };
+  }
+
+  function mapToRows(obstacle, dust) {
+    const rows = [];
+    for (let y = 0; y < N; y++) {
+      let s = "";
+      for (let x = 0; x < N; x++) s += obstacle[y][x] ? "#" : dust[y][x] > 0 ? String(Math.min(9, dust[y][x])) : ".";
+      rows.push(s);
+    }
+    return rows;
+  }
+
+  /* Returns a list of problems; an empty list means the configuration is valid. */
+  function validate(config) {
+    const errors = [];
+    let parsed = null;
+    try { parsed = parseMap(config.map); } catch (e) { errors.push(e.message); }
+    const s = config.start || {};
+    if (!Number.isInteger(s.x) || !Number.isInteger(s.y) || s.x < 0 || s.y < 0 || s.x >= N || s.y >= N)
+      errors.push("start position must be inside the 10x10 grid");
+    else if (parsed && parsed.obstacle[s.y][s.x]) errors.push("start position is on an obstacle");
+    if (!HEADINGS.includes(s.heading)) errors.push("start heading must be N, E, S, or W");
+    const p = config.sidePeriod === undefined ? 1 : config.sidePeriod;
+    if (!Number.isInteger(p) || p < 1 || p > 5) errors.push("side/dust sensor period must be 1-5 ticks");
+    const m = config.maxTicks === undefined ? MAX_TICKS : config.maxTicks;
+    if (!Number.isInteger(m) || m < 1 || m > MAX_TICKS) errors.push("max ticks must be 1-100");
+    return errors;
+  }
+
+  class Simulation {
+    constructor(wasmExports) { this.c = wasmExports; this.history = []; this.maxTicks = MAX_TICKS; }
+
+    /* initialize(configuration) / reset(): restores controller and map. */
+    reset(config) {
+      const errors = validate(config);
+      if (errors.length) throw new Error(errors.join("; "));
+      this.config = JSON.parse(JSON.stringify(config));
+      this.sidePeriod = config.sidePeriod || 1;
+      this.maxTicks = config.maxTicks || MAX_TICKS;
+      const m = parseMap(config.map);
+      this.obstacle = m.obstacle;
+      this.dust = m.dust;
+      this.x = config.start.x;
+      this.y = config.start.y;
+      this.h = HEADINGS.indexOf(config.start.heading);
+      this.lastFront = null;
+      this.c.rvc_reset();
+      this.history = [this.snapshot(null, null, [])];
+      return this.history[0];
+    }
+
+    blocked(x, y) { return x < 0 || y < 0 || x >= N || y >= N || this.obstacle[y][x]; }
+    blockedToward(h) { const v = VEC[(h + 4) % 4]; return this.blocked(this.x + v[0], this.y + v[1]); }
+    get tick() { return this.history.length - 1; }
+    get finished() { return this.tick >= this.maxTicks; }
+
+    /* Sensor inputs from the map. Front arrives by interrupt (only when it changes);
+     * left, right and dust arrive periodically every sidePeriod ticks (PR-8). */
+    senseInputs(t) {
+      const front = this.blockedToward(this.h);
+      const inp = { frontArrived: false, front: false, leftArrived: false, left: false,
+                    rightArrived: false, right: false, dustArrived: false, dust: false };
+      if (this.lastFront === null || front !== this.lastFront) {
+        inp.frontArrived = true; inp.front = front; this.lastFront = front;
+      }
+      if ((t - 1) % this.sidePeriod === 0) {
+        inp.leftArrived = inp.rightArrived = inp.dustArrived = true;
+        inp.left = this.blockedToward(this.h + 3);
+        inp.right = this.blockedToward(this.h + 1);
+        inp.dust = this.dust[this.y][this.x] > 0;
+      }
+      return inp;
+    }
+
+    /* step(): one complete system update. */
+    step() {
+      if (this.finished) return null;
+      const t = this.tick + 1;
+      const prev = this.history[this.history.length - 1];
+      const inp = this.senseInputs(t);
+      const b = (v) => (v ? 1 : 0);
+      this.c.rvc_step(b(inp.frontArrived), b(inp.front), b(inp.leftArrived), b(inp.left),
+                      b(inp.rightArrived), b(inp.right), b(inp.dustArrived), b(inp.dust));
+      const st = this.readController();
+      const changes = this.applyOutputs(st);
+      const snap = this.snapshot(inp, prev, changes);
+      snap.checks = checkRequirements(this.history, snap);
+      this.history.push(snap);
+      return snap;
+    }
+
+    readController() {
+      const c = this.c;
+      return {
+        state: c.rvc_get_state(), turnCount: c.rvc_get_turn_count(), cleanupCount: c.rvc_get_cleanup_count(),
+        dustDuringTurn: c.rvc_get_dust_during_turn() === 1, directionCommand: c.rvc_get_direction_command(),
+        cleanCommand: c.rvc_get_clean_command(), motor: c.rvc_get_motor_output(), cleaner: c.rvc_get_cleaner_output(),
+        sensors: c.rvc_get_sensors(), tick: Number(c.rvc_get_tick()),
+      };
+    }
+
+    /* Environment response to the outputs actually sent to the motor and cleaner. */
+    applyOutputs(st) {
+      const changes = [];
+      if (st.cleaner === 2 && this.dust[this.y][this.x] > 0) {
+        this.dust[this.y][this.x]--;
+        changes.push("dust at (" + this.x + "," + this.y + ") " + (this.dust[this.y][this.x] + 1) + "->" + this.dust[this.y][this.x]);
+      }
+      const v = VEC[this.h];
+      const from = "(" + this.x + "," + this.y + ")";
+      if (st.motor === 0 || st.motor === 1) {
+        const sign = st.motor === 0 ? 1 : -1;
+        const nx = this.x + sign * v[0], ny = this.y + sign * v[1];
+        if (!this.blocked(nx, ny)) { this.x = nx; this.y = ny; changes.push("moved " + from + "->(" + nx + "," + ny + ")"); }
+        else changes.push("movement blocked at " + from);
+      } else if ((st.motor === 2 || st.motor === 3) && st.turnCount === 3) {
+        const oldH = HEADINGS[this.h];
+        this.h = (this.h + (st.motor === 2 ? 3 : 1)) % 4;
+        changes.push("heading " + oldH + "->" + HEADINGS[this.h] + " (turn completed)");
+      }
+      return changes;
+    }
+
+    snapshot(inp, prev, changes) {
+      const st = this.readController();
+      const s = st.sensors;
+      return {
+        tick: st.tick, x: this.x, y: this.y, heading: HEADINGS[this.h],
+        input: inp,
+        sensors: { front: !!(s & 8), left: !!(s & 4), right: !!(s & 2), dust: !!(s & 1) },
+        prevState: prev ? prev.state : null,
+        state: STATE_NAMES[st.state],
+        transition: prev ? prev.state + " -> " + STATE_NAMES[st.state] : "begin automatic cleaning -> Forward",
+        directionCommand: DIR_NAMES[st.directionCommand], cleanCommand: CLEAN_NAMES[st.cleanCommand],
+        motor: st.motor >= 0 ? DIR_NAMES[st.motor] : "-", cleaner: st.cleaner >= 0 ? CLEAN_NAMES[st.cleaner] : "-",
+        turnCount: st.turnCount, cleanupCount: st.cleanupCount, dustDuringTurn: st.dustDuringTurn,
+        map: mapToRows(this.obstacle, this.dust), changes, checks: [],
+      };
+    }
+
+    runToEnd() { while (!this.finished) this.step(); return this.history; }
+  }
+
+  /* Requirement checks recorded with each tick. They flag a possible violation
+   * for the evaluator; they never assign PASS or FAIL (the human does). */
+  function checkRequirements(history, s) {
+    const out = [];
+    const turning = s.state === "TurnLeft" || s.state === "TurnRight";
+    if ((s.cleaner === "clean_off") !== (turning || s.state === "Backward"))
+      out.push("PR-13: clean_off must be used only while turning or moving backward");
+    if (s.motor === "stop" && s.cleaner !== "clean_up") out.push("PR-13: stop without clean_up");
+    if (s.state === "Forward" && (s.motor !== "forward" || s.cleaner !== "clean_on"))
+      out.push("PR-2: Forward must go forward with clean_on");
+    if (s.cleanupCount > 3) out.push("PR-11: clean_up activation longer than 3 ticks");
+    if (turning && s.turnCount > 3) out.push("PR-10: turn longer than 3 ticks");
+    const prev = history[history.length - 1];
+    const prevTurning = prev && (prev.state === "TurnLeft" || prev.state === "TurnRight");
+    if (prevTurning && prev.turnCount < 3 && !(s.state === prev.state && s.turnCount === prev.turnCount + 1))
+      out.push("PR-10: turn ended before 3 ticks");
+    const newTurn = turning && s.turnCount === 1;
+    if (newTurn && !s.sensors.left && s.state !== "TurnLeft") out.push("PR-9: left turn has priority");
+    if (s.motor !== s.directionCommand || s.cleaner !== s.cleanCommand) out.push("Output differs from selected command");
+    return out;
+  }
+
+  const api = { N, MAX_TICKS, STATE_NAMES, DIR_NAMES, CLEAN_NAMES, HEADINGS, instantiate, parseMap, mapToRows, validate, Simulation };
+  if (typeof module !== "undefined" && module.exports) module.exports = api;
+  root.RvcSim = api;
+})(typeof globalThis !== "undefined" ? globalThis : this);
+</script>
+<script>/* Predefined system test scenarios (ST-01 .. ST-21).
+ * Map rows: y = 0 (top) .. 9 (bottom); '.' empty, '#' obstacle, '1'-'9' dust amount.
+ * Default start (4,4) heading N (no initial heading is given by the requirements).
+ * Expected behavior is written from the requirements (PR-x) and the Level 4 FSM;
+ * the human evaluator decides PASS / FAIL / INCONCLUSIVE. */
+(function (root) {
+  "use strict";
+  const E = "..........";
+  const blank = () => [E, E, E, E, E, E, E, E, E, E];
+  const put = (rows, cells) => {
+    const g = rows.map((r) => r.split(""));
+    for (const [x, y, c] of cells) g[y][x] = c;
+    return g.map((r) => r.join(""));
+  };
+  const corridor = (extra) => put(blank(), [[4, 0, "#"], [3, 1, "#"], [3, 2, "#"], [3, 3, "#"], [3, 4, "#"],
+    [5, 1, "#"], [5, 2, "#"], [5, 3, "#"], [5, 4, "#"]].concat(extra || []));
+  const cluttered = [
+    "..#.......", ".....3..#.", "#...#.....", "..1....##.", "......#...",
+    ".#.......2", "...2.#....", "......#...", ".#.....1..", "....#.....",
+  ];
+
+  const S = (o) => Object.assign({ start: { x: 4, y: 4, heading: "N" }, sidePeriod: 1, maxTicks: 100 }, o);
+
+  const scenarios = [
+    S({ id: "ST-01", name: "Open room: straight to the wall, then left turn",
+      map: blank(), functions: ["Forward cleaning", "Obstacle avoidance by turning", "Left-turn priority", "3-tick turn"],
+      requirements: ["PR-2", "PR-3", "PR-9", "PR-10", "PR-13"], artifacts: ["FSM Forward/TurnLeft rows", "Process 2.2.2"],
+      expected: "Goes north with forward + clean_on until the wall at y=0. With the front blocked and both sides clear it turns LEFT (left priority) for exactly 3 ticks with clean_off, then goes forward (west) with clean_on again." }),
+    S({ id: "ST-02", name: "Left side blocked: right turn",
+      map: put(blank(), [[4, 1, "#"], [3, 2, "#"]]), functions: ["Obstacle avoidance by turning", "Right turn when left is blocked", "3-tick turn", "clean_off only while turning"],
+      requirements: ["PR-3", "PR-9", "PR-10", "PR-13"], artifacts: ["FSM row Forward->TurnRight", "Process 2.2.2"],
+      expected: "At (4,2) the front (4,1) and the left (3,2) are blocked, the right is clear, so it turns RIGHT for 3 ticks with clean_off, then goes east with clean_on." }),
+    S({ id: "ST-03", name: "Single obstacle mid-room: left priority",
+      map: put(blank(), [[4, 2, "#"]]), functions: ["Forward cleaning", "Left-turn priority", "3-tick turn"],
+      requirements: ["PR-2", "PR-3", "PR-9", "PR-10"], artifacts: ["FSM row Forward->TurnLeft"],
+      expected: "Stops cleaning in front of (4,2) and turns LEFT although the right is also clear. After 3 turn ticks it continues west with clean_on." }),
+    S({ id: "ST-04", name: "Dead-end corridor: backward until a side clears, then left",
+      map: corridor(), functions: ["Backward when front, left and right are blocked", "Backward continues until a side is clear", "Left-turn priority after backward", "clean_off while backward"],
+      requirements: ["PR-4", "PR-14", "PR-9", "PR-13"], artifacts: ["FSM Backward rows", "Process 2.2.2"],
+      expected: "Drives up the corridor to (4,1). Front, left and right are blocked, so it moves BACKWARD with clean_off. Backward continues while both sides stay blocked; at (4,5) both sides are clear and it turns LEFT, then goes forward with clean_on." }),
+    S({ id: "ST-05", name: "Dead-end corridor: backward, then right turn",
+      map: corridor([[3, 5, "#"], [3, 6, "#"]]), functions: ["Backward when all blocked", "Backward until a side is clear", "Right turn when only the right is clear"],
+      requirements: ["PR-4", "PR-14", "PR-9", "PR-10"], artifacts: ["FSM rows Backward->Backward, Backward->TurnRight"],
+      expected: "Backs out of the corridor. At (4,5) the left (3,5) is still blocked and the right is clear, so it turns RIGHT for 3 ticks, then goes forward." }),
+    S({ id: "ST-06", name: "Single dust cell: short clean_up",
+      map: put(blank(), [[4, 2, "1"]]), functions: ["Dust detection powers up cleaning", "clean_up ends when dust is gone", "Forward cleaning"],
+      requirements: ["PR-5", "PR-11", "PR-2", "PR-12"], artifacts: ["FSM rows Forward->CleanUpForward, CleanUpForward->Forward"],
+      expected: "On the dusty cell it switches to clean_up while still moving forward. On the next cell the dust is no longer detected, so the activation ends early (less than 3 ticks) and clean_on resumes." }),
+    S({ id: "ST-07", name: "Long dust strip: activations of at most 3 ticks",
+      start: { x: 4, y: 8, heading: "N" }, map: put(blank(), [[4, 7, "1"], [4, 6, "1"], [4, 5, "1"], [4, 4, "1"], [4, 3, "1"]]),
+      functions: ["Dust powers up cleaning", "One activation lasts at most 3 ticks", "Next activation starts while dust remains", "Forward cleaning"],
+      requirements: ["PR-5", "PR-11", "PR-2"], artifacts: ["FSM rows CleanUpForward (activation ends, dust remains)"],
+      expected: "Over the 5 dusty cells it moves forward with clean_up. cleanup_count goes 1,2,3 and then restarts at 1 because dust is still detected (no activation longer than 3 ticks). After the strip it returns to clean_on." }),
+    S({ id: "ST-08", name: "Front obstacle during clean_up: stop and keep cleaning, then turn",
+      map: put(blank(), [[4, 2, "1"], [4, 1, "4"], [4, 0, "#"]]),
+      functions: ["Dust powers up cleaning", "Stop in place when front is blocked during clean_up", "Repeated activations while stopped", "Turn after cleaning ends"],
+      requirements: ["PR-15", "PR-11", "PR-5", "PR-3", "PR-13"], artifacts: ["FSM rows CleanUpForward->CleanUpStopped, CleanUpStopped rows"],
+      expected: "Enters clean_up on (4,2), moves to (4,1) where the front is blocked and dust is present: direction becomes stop with clean_up and it stays at (4,1). It keeps cleaning (new activation when 3 ticks end) and does not turn or move backward until the dust is gone; then it turns LEFT." }),
+    S({ id: "ST-09", name: "clean_up stopped in a dead end: backward after cleaning",
+      map: put(blank(), [[4, 2, "1"], [4, 1, "2"], [4, 0, "#"], [3, 1, "#"], [5, 1, "#"]]),
+      functions: ["Stop and keep cleaning during clean_up", "Backward when all sides are blocked after cleaning", "clean_off only while backward"],
+      requirements: ["PR-15", "PR-4", "PR-13", "PR-11"], artifacts: ["FSM row CleanUpStopped->Backward"],
+      expected: "Stops at (4,1) with clean_up until the dust is gone. Then, with front, left and right blocked, it moves backward with clean_off, and turns when a side becomes clear." }),
+    S({ id: "ST-10", name: "Dust while moving backward: one stop-and-clean activation",
+      map: corridor([[4, 2, "3"]]), functions: ["Backward when all blocked", "Dust while backward: stop and clean_up", "Return to backward after one activation"],
+      requirements: ["PR-16", "PR-4", "PR-14", "PR-11"], artifacts: ["FSM rows Backward->CleanUpBackwardPause->Backward"],
+      expected: "After reaching the dead end it moves backward. On the dusty cell it stops with clean_up for one activation (at most 3 ticks, shorter if dust disappears), then continues backward with clean_off, then turns when a side is clear." }),
+    S({ id: "ST-11", name: "Heavy dust while backing up: activation limit",
+      map: corridor([[4, 2, "9"]]), functions: ["Dust while backward", "Activation limited to 3 ticks", "Backward resumes even if dust remains"],
+      requirements: ["PR-16", "PR-11", "PR-14"], artifacts: ["FSM row CleanUpBackwardPause (cleanup_count = 3) -> Backward"],
+      expected: "While backing up over the heavy dust cell it stops for exactly 3 clean_up ticks, then moves backward again although dust is still detected (one activation only)." }),
+    S({ id: "ST-12", name: "Dust detected during a turn",
+      map: put(blank(), [[4, 0, "1"]]), functions: ["3-tick turn is not interrupted", "Dust during turn: forward in clean_up afterwards", "Left-turn priority"],
+      requirements: ["PR-17", "PR-10", "PR-5", "PR-9"], artifacts: ["FSM rows TurnLeft->CleanUpForward", "dust_during_turn"],
+      expected: "At the wall cell (4,0) there is dust. It still turns LEFT for 3 ticks with clean_off (dust_during_turn = 1), and after the turn it goes forward with clean_up." }),
+    S({ id: "ST-13", name: "Corner start: immediate right turn",
+      start: { x: 0, y: 0, heading: "N" }, map: blank(), functions: ["Obstacle avoidance from the first tick", "Right turn when left is blocked", "3-tick turn"],
+      requirements: ["PR-3", "PR-9", "PR-10", "PR-8"], artifacts: ["FSM row Forward->TurnRight", "Interpretation 2 (initial sensor values)"],
+      expected: "Front (outside the grid) and left (outside) are blocked on tick 1, so it turns RIGHT for 3 ticks, then goes east with clean_on." }),
+    S({ id: "ST-14", name: "Fully enclosed: keeps moving backward",
+      map: put(blank(), [[4, 3, "#"], [4, 5, "#"], [3, 4, "#"], [5, 4, "#"]]),
+      functions: ["Backward when all blocked", "Backward continues until a side is clear", "clean_off only while backward"],
+      requirements: ["PR-4", "PR-14", "PR-13"], artifacts: ["FSM row Backward->Backward"],
+      expected: "All four neighbors are obstacles. It commands backward with clean_off on every tick (the cell behind is blocked, so it does not move) and never turns because no side becomes clear." }),
+    S({ id: "ST-15", name: "Slow periodic sensors in a cluttered room",
+      map: cluttered, sidePeriod: 3, functions: ["Latest sensor values are used", "Obstacle avoidance", "Dust power-up", "Forward cleaning"],
+      requirements: ["PR-8", "PR-3", "PR-5", "PR-2"], artifacts: ["Process 1 Capture Sensor Values", "D1 Latest Sensor Values"],
+      expected: "Left, right and dust samples arrive only every 3 ticks; the front arrives by interrupt when it changes. The controller decides from the latest stored values, so a turn direction may use a side value up to 2 ticks old. The RVC never enters an obstacle cell." }),
+    S({ id: "ST-16", name: "Corridor with periodic side sensors (period 2)",
+      map: corridor(), sidePeriod: 2, functions: ["Interrupt front / periodic sides", "Backward until a side is clear", "Left-turn priority"],
+      requirements: ["PR-8", "PR-14", "PR-9", "PR-4"], artifacts: ["Process 1.1-1.4", "FSM Backward rows"],
+      expected: "Same path as ST-04, but backward may last one tick longer because the side values are refreshed every 2 ticks. It still turns LEFT when both sides read clear." }),
+    S({ id: "ST-17", name: "Start facing east",
+      start: { x: 4, y: 4, heading: "E" }, map: blank(), functions: ["Forward cleaning", "Obstacle avoidance by turning", "Left-turn priority", "3-tick turn"],
+      requirements: ["PR-2", "PR-3", "PR-9", "PR-10"], artifacts: ["FSM Forward/TurnLeft rows"],
+      expected: "Goes east to x=9, turns LEFT (to the north) for 3 ticks, then continues north with clean_on." }),
+    S({ id: "ST-18", name: "Start facing south, left blocked at the wall",
+      start: { x: 4, y: 4, heading: "S" }, map: put(blank(), [[5, 9, "#"]]),
+      functions: ["Obstacle avoidance", "Right turn when left is blocked", "3-tick turn", "clean_off only while turning"],
+      requirements: ["PR-3", "PR-9", "PR-10", "PR-13"], artifacts: ["FSM row Forward->TurnRight"],
+      expected: "Goes south to (4,9). The front (wall) and its left (east, (5,9)) are blocked, so it turns RIGHT (to the west) for 3 ticks, then goes west." }),
+    S({ id: "ST-19", name: "Cluttered room, 100 ticks",
+      map: cluttered, functions: ["Forward cleaning", "Obstacle avoidance", "Backward escape", "Dust power-up"],
+      requirements: ["PR-2", "PR-3", "PR-4", "PR-5", "PR-10", "PR-11", "PR-13"], artifacts: ["Level 4 FSM", "Process 2.2.2"],
+      expected: "Runs the whole 100 ticks without entering an obstacle. Every turn lasts 3 ticks, every clean_up activation at most 3 ticks, and clean_off appears only while turning or backing up." }),
+    S({ id: "ST-20", name: "Scattered dust field",
+      map: ["..1.......", "....2.....", ".1......1.", "....1.....", ".......2..", "..3.......", "......1...", ".1........", "....2...1.", ".........."],
+      functions: ["Dust powers up cleaning", "Activation limit / early end", "Return to clean_on", "Obstacle (wall) avoidance"],
+      requirements: ["PR-5", "PR-11", "PR-2", "PR-3"], artifacts: ["FSM CleanUpForward rows"],
+      expected: "Each time a dusty cell is under the RVC it switches to clean_up while moving; the activation ends when dust is no longer detected or after 3 ticks, and clean_on resumes. Walls are avoided by turns." }),
+    S({ id: "ST-21", name: "Stopped clean_up, then right turn",
+      map: put(blank(), [[4, 2, "1"], [4, 1, "2"], [4, 0, "#"], [3, 1, "#"]]),
+      functions: ["Stop and keep cleaning during clean_up", "Turn selection after cleaning ends", "Right turn when left is blocked"],
+      requirements: ["PR-15", "PR-9", "PR-3", "PR-10"], artifacts: ["FSM row CleanUpStopped->TurnRight"],
+      expected: "Stops at (4,1) with clean_up until the dust is gone; then, with the front and left blocked and the right clear, it turns RIGHT for 3 ticks." }),
+  ];
+
+  const api = { scenarios };
+  if (typeof module !== "undefined" && module.exports) module.exports = api;
+  root.RvcScenarios = scenarios;
+})(typeof globalThis !== "undefined" ? globalThis : this);
+</script>
+<script>/* Web UI of the RVC simulator. Uses RvcSim (sim-core.js) and RvcScenarios. */
+(function () {
+  "use strict";
+  const Sim = window.RvcSim;
+  const $ = (id) => document.getElementById(id);
+  const ARROW = { N: "▲", E: "▶", S: "▼", W: "◀" };
+  const LS_CUSTOM = "rvc-sim-custom-scenarios";
+  const LS_EVAL = "rvc-sim-evaluations";
+
+  const store = {
+    get(key, def) { try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : def; } catch (e) { return def; } },
+    set(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); return true; } catch (e) { return false; } },
+  };
+
+  function b64ToBytes(b64) {
+    const bin = atob(b64), bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    return bytes;
+  }
+
+  const sim = new Sim.Simulation(Sim.instantiate(b64ToBytes(RVC_WASM_BASE64)));
+  let customScenarios = store.get(LS_CUSTOM, []);
+  let scenario = null;   // selected scenario (definition)
+  let config = null;     // working configuration (may be edited)
+  let view = 0;          // history index being displayed
+  let timer = null;
+
+  const allScenarios = () => window.RvcScenarios.concat(customScenarios);
+  const clone = (o) => JSON.parse(JSON.stringify(o));
+
+  // ---------------- scenario selection ----------------
+  function fillScenarioSelect(selectId) {
+    const sel = $("scenario-select");
+    sel.innerHTML = "";
+    for (const s of allScenarios()) {
+      const o = document.createElement("option");
+      o.value = s.id; o.textContent = s.id + "  " + s.name + (s.custom ? " (사용자)" : "");
+      sel.appendChild(o);
+    }
+    if (selectId) sel.value = selectId;
+  }
+
+  function loadScenario(id) {
+    scenario = allScenarios().find((s) => s.id === id) || allScenarios()[0];
+    config = { map: clone(scenario.map), start: clone(scenario.start), sidePeriod: scenario.sidePeriod || 1, maxTicks: 100 };
+    $("start-heading").value = config.start.heading;
+    $("side-period").value = String(config.sidePeriod);
+    renderScenarioInfo();
+    loadEvaluation();
+    resetSim();
+  }
+
+  // ---------------- simulation control ----------------
+  function resetSim() {
+    pause();
+    const errors = Sim.validate(config);
+    $("validation").hidden = errors.length === 0;
+    $("validation").textContent = errors.length ? "지도 설정 오류: " + errors.join(" / ") : "";
+    if (errors.length) { sim.history = []; view = 0; render(); return false; }
+    sim.reset(config);
+    view = 0;
+    render();
+    return true;
+  }
+
+  function stepOnce() {
+    if (!sim.history.length) return false;
+    if (view < sim.history.length - 1) { view++; render(); return true; }   // move forward through saved snapshots
+    if (sim.finished) { pause(); return false; }
+    sim.step();
+    view = sim.history.length - 1;
+    render();
+    return !sim.finished;
+  }
+
+  function play() {
+    if (timer || !sim.history.length) return;
+    if (sim.finished && view === sim.history.length - 1) return;
+    timer = setInterval(() => { if (!stepOnce()) pause(); }, Number($("speed").value));
+    updateButtons();
+  }
+  function pause() { if (timer) { clearInterval(timer); timer = null; } updateButtons(); }
+
+  // ---------------- rendering ----------------
+  function render() { renderGrid(); renderInspector(); renderHistory(); updateButtons(); }
+
+  function renderGrid() {
+    const grid = $("grid");
+    grid.innerHTML = "";
+    const snap = sim.history[view];
+    const rows = snap ? snap.map : config.map;
+    const editing = $("edit-mode").checked;
+    const trail = new Set();
+    if (snap) for (let i = 0; i <= view; i++) trail.add(sim.history[i].x + "," + sim.history[i].y);
+    for (let y = 0; y < Sim.N; y++) for (let x = 0; x < Sim.N; x++) {
+      const c = rows[y][x];
+      const cell = document.createElement("div");
+      cell.className = "cell";
+      cell.dataset.x = x; cell.dataset.y = y;
+      if (c === "#") cell.classList.add("obstacle");
+      if (trail.has(x + "," + y)) cell.classList.add("trail");
+      if ((editing || !snap) && config.start.x === x && config.start.y === y) cell.classList.add("start");
+      if (x === 0 || y === 0) { const k = document.createElement("span"); k.className = "coord"; k.textContent = x === 0 ? y : x; cell.appendChild(k); }
+      if (c >= "1" && c <= "9") { const d = document.createElement("span"); d.className = "dust"; d.textContent = c; cell.appendChild(d); }
+      const rx = snap ? snap.x : config.start.x, ry = snap ? snap.y : config.start.y;
+      if (rx === x && ry === y) {
+        const r = document.createElement("span"); r.className = "rvc";
+        const h = snap ? snap.heading : config.start.heading;
+        r.textContent = ARROW[h]; r.title = "RVC (" + x + "," + y + ") heading " + h;
+        cell.appendChild(r);
+      }
+      cell.addEventListener("click", () => editCell(x, y));
+      grid.appendChild(cell);
+    }
+  }
+
+  function fmtBool(v) { return v ? "1 (감지)" : "0"; }
+  function fmtInput(arrived, v) { return arrived ? (v ? "1 도착" : "0 도착") : "- (도착 없음)"; }
+
+  function renderInspector() {
+    const s = sim.history[view], p = view > 0 ? sim.history[view - 1] : null;
+    const t = $("inspector");
+    if (!s) { t.innerHTML = ""; $("tick-counter").textContent = ""; $("changes").innerHTML = ""; $("checks").innerHTML = ""; return; }
+    $("tick-counter").innerHTML = "보는 tick <b>" + s.tick + "</b> · 실행한 tick " + sim.tick + " / " + sim.maxTicks +
+      (view < sim.history.length - 1 ? " · (저장된 스냅숏을 보는 중)" : "");
+    const fields = [
+      ["Tick", (x) => x.tick], ["위치 (x, y)", (x) => "(" + x.x + ", " + x.y + ")"], ["방향 (heading)", (x) => x.heading],
+      ["이전 상태", (x) => x.prevState || "-"], ["현재 상태", (x) => x.state], ["전이", (x) => x.transition],
+      ["Front Obstacle (저장값)", (x) => fmtBool(x.sensors.front)], ["Left Obstacle (저장값)", (x) => fmtBool(x.sensors.left)],
+      ["Right Obstacle (저장값)", (x) => fmtBool(x.sensors.right)], ["Dust Detected (저장값)", (x) => fmtBool(x.sensors.dust)],
+      ["이번 tick 입력 Front (인터럽트)", (x) => x.input ? fmtInput(x.input.frontArrived, x.input.front) : "-"],
+      ["이번 tick 입력 Left/Right/Dust (주기)", (x) => x.input ? [fmtInput(x.input.leftArrived, x.input.left), fmtInput(x.input.rightArrived, x.input.right), fmtInput(x.input.dustArrived, x.input.dust)].join(" · ") : "-"],
+      ["Direction Command", (x) => x.directionCommand], ["Clean Command", (x) => x.cleanCommand],
+      ["Motor 출력 (Direction)", (x) => x.motor], ["Cleaner 출력 (Clean)", (x) => x.cleaner],
+      ["turn_count (회전 타이머)", (x) => x.turnCount], ["cleanup_count (clean_up 타이머)", (x) => x.cleanupCount],
+      ["dust_during_turn", (x) => (x.dustDuringTurn ? "true" : "false")],
+    ];
+    t.innerHTML = "<tr><th>항목</th><td><b>현재</b></td><td class='prev'>직전 tick</td></tr>";
+    for (const [name, f] of fields) {
+      const cur = String(f(s)), prev = p ? String(f(p)) : "";
+      const tr = document.createElement("tr");
+      tr.innerHTML = "<th></th><td></td><td class='prev'></td>";
+      tr.children[0].textContent = name; tr.children[1].textContent = cur; tr.children[2].textContent = prev;
+      if (p && cur !== prev && name !== "Tick") tr.children[1].classList.add("changed");
+      t.appendChild(tr);
+    }
+    $("changes").innerHTML = s.changes.length ? "<h3>지도 변화</h3><ul>" + s.changes.map((c) => "<li>" + c + "</li>").join("") + "</ul>" : "";
+    $("checks").innerHTML = "<h3>요구사항 점검 (참고)</h3>" + (s.checks.length ? "<ul>" + s.checks.map((c) => "<li class='flag'>" + c + "</li>").join("") + "</ul>" : "<p class='note'>이 tick에서 표시된 위반 없음</p>");
+  }
+
+  function renderHistory() {
+    const t = $("history");
+    t.innerHTML = "<thead><tr><th>tick</th><th>위치</th><th>방향</th><th>입력 F L R D</th><th>저장값 F L R D</th><th>상태</th><th>Motor</th><th>Cleaner</th><th>turn</th><th>cleanup</th><th>dust_turn</th><th>지도 변화</th><th>점검</th></tr></thead>";
+    const body = document.createElement("tbody");
+    const tok = (a, v) => (a ? (v ? "1" : "0") : "-");
+    sim.history.forEach((s, i) => {
+      const tr = document.createElement("tr");
+      if (i === view) tr.classList.add("viewing");
+      if (s.checks.length) tr.classList.add("flagged");
+      if (i > 0 && s.state !== sim.history[i - 1].state) tr.classList.add("transition");
+      const inp = s.input ? [tok(s.input.frontArrived, s.input.front), tok(s.input.leftArrived, s.input.left), tok(s.input.rightArrived, s.input.right), tok(s.input.dustArrived, s.input.dust)].join(" ") : "";
+      const sv = [s.sensors.front, s.sensors.left, s.sensors.right, s.sensors.dust].map(Number).join(" ");
+      [s.tick, "(" + s.x + "," + s.y + ")", s.heading, inp, sv, s.state, s.motor, s.cleaner, s.turnCount, s.cleanupCount, s.dustDuringTurn ? 1 : 0, s.changes.join("; "), s.checks.join("; ")]
+        .forEach((v) => { const td = document.createElement("td"); td.textContent = v; tr.appendChild(td); });
+      tr.addEventListener("click", () => { pause(); view = i; render(); });
+      body.appendChild(tr);
+    });
+    t.appendChild(body);
+    const cur = body.children[view];
+    if (cur && timer) cur.scrollIntoView({ block: "nearest" });
+  }
+
+  function updateButtons() {
+    const has = sim.history.length > 0;
+    const atEnd = has && sim.finished && view === sim.history.length - 1;
+    $("btn-start").disabled = !has || !!timer || atEnd;
+    $("btn-pause").disabled = !timer;
+    $("btn-step").disabled = !has || atEnd;
+    $("btn-back").disabled = !has || view === 0;
+    $("btn-reset").disabled = !has && Sim.validate(config).length > 0;
+    $("btn-restart").disabled = Sim.validate(config).length > 0;
+  }
+
+  function renderScenarioInfo() {
+    const s = scenario;
+    const li = (arr) => "<ul>" + arr.map((x) => "<li>" + x + "</li>").join("") + "</ul>";
+    $("scenario-info").innerHTML = "<dl>" +
+      "<dt>ID</dt><dd>" + s.id + "</dd><dt>이름</dt><dd>" + s.name + "</dd>" +
+      "<dt>시작</dt><dd>(" + s.start.x + "," + s.start.y + ") " + s.start.heading + " · 최대 100 tick · 좌/우/먼지 주기 " + (s.sidePeriod || 1) + "</dd>" +
+      "<dt>검증 기능</dt><dd>" + li(s.functions || []) + "</dd>" +
+      "<dt>요구사항</dt><dd>" + (s.requirements || []).join(", ") + "</dd>" +
+      "<dt>SA 산출물</dt><dd>" + (s.artifacts || []).join(", ") + "</dd>" +
+      "<dt>기대 동작</dt><dd>" + (s.expected || "") + "</dd></dl>";
+  }
+
+  // ---------------- map editing ----------------
+  function editCell(x, y) {
+    if (!$("edit-mode").checked) return;
+    const tool = document.querySelector("input[name=tool]:checked").value;
+    const g = config.map.map((r) => r.split(""));
+    if (tool === "start") { config.start.x = x; config.start.y = y; }
+    else if (tool === "obstacle") g[y][x] = g[y][x] === "#" ? "." : "#";
+    else if (tool === "dust") { const c = g[y][x]; g[y][x] = c === "#" ? "#" : c === "." ? "1" : c === "9" ? "." : String(Number(c) + 1); }
+    else g[y][x] = ".";
+    config.map = g.map((r) => r.join(""));
+    resetSim();   // the edited map takes effect from tick 0; invalid maps are reported, not changed
+  }
+
+  function saveCustom() {
+    const name = $("custom-name").value.trim() || "사용자 지도";
+    if (Sim.validate(config).length) { alert("지도 설정 오류를 먼저 고쳐 주세요."); return; }
+    const n = customScenarios.length + 1;
+    const s = Object.assign(clone(config), {
+      id: "CU-" + String(n).padStart(2, "0") + "-" + Date.now().toString(36).slice(-4), name, custom: true,
+      functions: ["(평가자가 작성)"], requirements: [], artifacts: [],
+      expected: "사용자 지도. 기대 동작은 평가자가 요구사항(PR-x)에 따라 판단합니다.",
+    });
+    customScenarios.push(s);
+    store.set(LS_CUSTOM, customScenarios);
+    fillScenarioSelect(s.id);
+    loadScenario(s.id);
+  }
+
+  // ---------------- human evaluation and export ----------------
+  function evaluations() { return store.get(LS_EVAL, {}); }
+  function loadEvaluation() {
+    const e = evaluations()[scenario.id] || {};
+    $("eval-result").value = e.result || ""; $("eval-evaluator").value = e.evaluator || "";
+    $("eval-ticks").value = e.ticks || ""; $("eval-notes").value = e.notes || "";
+    $("eval-saved").textContent = e.savedAt ? "저장됨 " + e.savedAt : "";
+  }
+  function saveEvaluation() {
+    const all = evaluations();
+    const flags = sim.history.reduce((n, s) => n + s.checks.length, 0);
+    all[scenario.id] = { result: $("eval-result").value, evaluator: $("eval-evaluator").value, ticks: $("eval-ticks").value,
+      notes: $("eval-notes").value, savedAt: new Date().toLocaleString(), ticksRun: sim.tick, checkFlags: flags, name: scenario.name,
+      requirements: scenario.requirements || [] };
+    const ok = store.set(LS_EVAL, all);
+    $("eval-saved").textContent = ok ? "저장됨 " + all[scenario.id].savedAt : "브라우저 저장소를 쓸 수 없어 저장하지 못했습니다. 결과를 .md로 내보내 주세요.";
+  }
+  function download(name, text, type) {
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([text], { type }));
+    a.download = name; document.body.appendChild(a); a.click(); a.remove();
+  }
+  function exportResults() {
+    const all = evaluations();
+    let md = "# RVC System Test Results\n\n내보낸 시각: " + new Date().toLocaleString() + "\n\n| Scenario | Name | Requirements | Human Result | Evaluator | Related Ticks | Ticks Run | Check Flags | Observations |\n|---|---|---|---|---|---|---|---|---|\n";
+    for (const s of allScenarios()) {
+      const e = all[s.id] || {};
+      md += "| " + [s.id, s.name, (s.requirements || []).join(", "), e.result || "Pending", e.evaluator || "", e.ticks || "", e.ticksRun ?? "", e.checkFlags ?? "", (e.notes || "").replace(/\n/g, " ")].map((v) => String(v).replace(/\|/g, "/")).join(" | ") + " |\n";
+    }
+    download("rvc-system-test-results.md", md, "text/markdown");
+  }
+  function exportTrace() {
+    download(scenario.id + "-trace.json", JSON.stringify({ scenario: { id: scenario.id, name: scenario.name }, configuration: config, history: sim.history }, null, 1), "application/json");
+  }
+
+  // ---------------- wiring ----------------
+  $("scenario-select").addEventListener("change", (e) => loadScenario(e.target.value));
+  $("btn-start").addEventListener("click", play);
+  $("btn-pause").addEventListener("click", pause);
+  $("btn-step").addEventListener("click", () => { pause(); stepOnce(); });
+  $("btn-back").addEventListener("click", () => { pause(); if (view > 0) { view--; render(); } });
+  $("btn-reset").addEventListener("click", resetSim);
+  $("btn-restart").addEventListener("click", () => { if (resetSim()) play(); });
+  $("speed").addEventListener("input", (e) => { $("speed-label").textContent = e.target.value + " ms/tick"; if (timer) { pause(); play(); } });
+  $("edit-mode").addEventListener("change", (e) => { $("edit-tools").hidden = !e.target.checked; document.body.classList.toggle("editing", e.target.checked); if (e.target.checked) resetSim(); else render(); });
+  $("start-heading").addEventListener("change", (e) => { config.start.heading = e.target.value; resetSim(); });
+  $("side-period").addEventListener("change", (e) => { config.sidePeriod = Number(e.target.value); resetSim(); });
+  $("clear-map").addEventListener("click", () => { config.map = Array(10).fill(".........."); resetSim(); });
+  $("restore-map").addEventListener("click", () => loadScenario(scenario.id));
+  $("save-custom").addEventListener("click", saveCustom);
+  $("eval-save").addEventListener("click", saveEvaluation);
+  $("export-results").addEventListener("click", exportResults);
+  $("export-trace").addEventListener("click", exportTrace);
+  $("export-scenarios").addEventListener("click", () => download("rvc-custom-scenarios.json", JSON.stringify(customScenarios, null, 1), "application/json"));
+  $("import-scenarios").addEventListener("change", async (e) => {
+    const f = e.target.files[0]; if (!f) return;
+    try {
+      const list = JSON.parse(await f.text());
+      const ok = (Array.isArray(list) ? list : [list]).filter((s) => s && s.id && Sim.validate(s).length === 0);
+      for (const s of ok) { s.custom = true; customScenarios = customScenarios.filter((c) => c.id !== s.id).concat([s]); }
+      store.set(LS_CUSTOM, customScenarios);
+      fillScenarioSelect(ok.length ? ok[0].id : scenario.id);
+      if (ok.length) loadScenario(ok[0].id);
+      alert(ok.length + "개 시나리오를 불러왔습니다.");
+    } catch (err) { alert("불러오기 실패: " + err.message); }
+    e.target.value = "";
+  });
+  $("delete-custom").addEventListener("click", () => {
+    if (!scenario.custom) { alert("미리 정의된 시나리오는 삭제할 수 없습니다."); return; }
+    customScenarios = customScenarios.filter((s) => s.id !== scenario.id);
+    store.set(LS_CUSTOM, customScenarios);
+    fillScenarioSelect(); loadScenario(allScenarios()[0].id);
+  });
+
+  fillScenarioSelect();
+  loadScenario(allScenarios()[0].id);
+})();
+</script>
+</body>
+</html>

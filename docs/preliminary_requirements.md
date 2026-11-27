@@ -1,0 +1,18 @@
+Robot Vacuum Cleaner (RVC) SW Controller
+- An RVC automatically cleans and mops household surface.
+- It goes straight forward while cleaning.
+- If its sensors found an obstacle, it stops cleaning, turns aside left or right, and goes forward with cleaning.
+- If there are obstacles in both front, left and right, it move backward and turn aside left or right, and goes forward.
+- If it detects dust, power up the cleaning for a while.
+- We do not consider the detail design and implementation on HW controls.
+- We only focus on the automatic cleaning function.
+- The front sensor input arrives by interrupt. The left sensor, right sensor, and dust sensor inputs arrive periodically. Every sensor value is boolean. Sensor values keep arriving, and the controller uses the latest value of each sensor.
+- If both a left turn and a right turn are possible, the left turn has priority.
+- The controller has an internal tick. A turn lasts 3 ticks.
+- One clean_up activation lasts at most 3 ticks, because clean_up must not stay on without a limit once it is turned on. It ends sooner when dust is no longer detected.
+- The cleaner mode is clean_off, clean_on, or clean_up.
+- The cleaner mode is clean_off only while the RVC is moving backward or turning. Direction can command a stop so the RVC stays in place.
+- Backward continues until the left side or the right side is clear. The RVC then turns, using left-turn priority when both sides are clear.
+- If a front obstacle is found during clean_up, the RVC stops in place and keeps cleaning until dust is no longer detected. It does not turn or move backward until that cleaning ends. Each activation is still at most 3 ticks. If dust remains when a 3-tick activation ends, the next activation starts while the RVC stays stopped.
+- If dust is detected while moving backward, the RVC stops, runs one clean_up activation, and then moves backward again.
+- If dust is detected during a turn, the turn finishes. The RVC then goes forward in clean_up.
