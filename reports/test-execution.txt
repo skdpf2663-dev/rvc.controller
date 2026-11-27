@@ -1,0 +1,199 @@
+Test project /home/user/rvc.controller/build-cov
+      Start  1: unit_functional.F.R00_InitialStateIsForwardCleanOn
+ 1/97 Test  #1: unit_functional.F.R00_InitialStateIsForwardCleanOn ..............................   Passed    0.00 sec
+      Start  2: unit_functional.F.R01_ForwardFrontLeftClearTurnsLeft
+ 2/97 Test  #2: unit_functional.F.R01_ForwardFrontLeftClearTurnsLeft ............................   Passed    0.00 sec
+      Start  3: unit_functional.F.R01_ForwardFrontWithDustRecordsDustDuringTurn
+ 3/97 Test  #3: unit_functional.F.R01_ForwardFrontWithDustRecordsDustDuringTurn .................   Passed    0.00 sec
+      Start  4: unit_functional.F.R02_ForwardFrontLeftBlockedTurnsRight
+ 4/97 Test  #4: unit_functional.F.R02_ForwardFrontLeftBlockedTurnsRight .........................   Passed    0.00 sec
+      Start  5: unit_functional.F.R03_ForwardAllBlockedGoesBackward
+ 5/97 Test  #5: unit_functional.F.R03_ForwardAllBlockedGoesBackward .............................   Passed    0.00 sec
+      Start  6: unit_functional.F.R04_ForwardDustPowersUpCleaning
+ 6/97 Test  #6: unit_functional.F.R04_ForwardDustPowersUpCleaning ...............................   Passed    0.00 sec
+      Start  7: unit_functional.F.R05_ForwardClearKeepsGoing
+ 7/97 Test  #7: unit_functional.F.R05_ForwardClearKeepsGoing ....................................   Passed    0.00 sec
+      Start  8: unit_functional.F.R01_FrontHasPriorityOverDustInForward
+ 8/97 Test  #8: unit_functional.F.R01_FrontHasPriorityOverDustInForward .........................   Passed    0.00 sec
+      Start  9: unit_functional.F.R06_R08_TurnLeftLastsThreeTicksThenForward
+ 9/97 Test  #9: unit_functional.F.R06_R08_TurnLeftLastsThreeTicksThenForward ....................   Passed    0.00 sec
+      Start 10: unit_functional.F.R07_DustDuringTurnLeftFinishesTurnThenCleanUp
+10/97 Test #10: unit_functional.F.R07_DustDuringTurnLeftFinishesTurnThenCleanUp .................   Passed    0.00 sec
+      Start 11: unit_functional.F.R07_DustOnCompletionTickSelectsCleanUp
+11/97 Test #11: unit_functional.F.R07_DustOnCompletionTickSelectsCleanUp ........................   Passed    0.00 sec
+      Start 12: unit_functional.F.R09_R11_TurnRightLastsThreeTicksThenForward
+12/97 Test #12: unit_functional.F.R09_R11_TurnRightLastsThreeTicksThenForward ...................   Passed    0.00 sec
+      Start 13: unit_functional.F.R10_DustDuringTurnRightThenCleanUp
+13/97 Test #13: unit_functional.F.R10_DustDuringTurnRightThenCleanUp ............................   Passed    0.00 sec
+      Start 14: unit_functional.F.R12_BackwardLeftClearTurnsLeft
+14/97 Test #14: unit_functional.F.R12_BackwardLeftClearTurnsLeft ................................   Passed    0.00 sec
+      Start 15: unit_functional.F.R13_BackwardRightClearTurnsRight
+15/97 Test #15: unit_functional.F.R13_BackwardRightClearTurnsRight ..............................   Passed    0.00 sec
+      Start 16: unit_functional.F.R14_BackwardDustStopsForCleanUp
+16/97 Test #16: unit_functional.F.R14_BackwardDustStopsForCleanUp ...............................   Passed    0.00 sec
+      Start 17: unit_functional.F.R15_BackwardContinuesWhileSidesBlocked
+17/97 Test #17: unit_functional.F.R15_BackwardContinuesWhileSidesBlocked ........................   Passed    0.00 sec
+      Start 18: unit_functional.F.R16_R17_BackwardPauseIsOneActivationOfThreeTicks
+18/97 Test #18: unit_functional.F.R16_R17_BackwardPauseIsOneActivationOfThreeTicks ..............   Passed    0.00 sec
+      Start 19: unit_functional.F.R17_BackwardPauseEndsWhenDustGone
+19/97 Test #19: unit_functional.F.R17_BackwardPauseEndsWhenDustGone .............................   Passed    0.00 sec
+      Start 20: unit_functional.F.R14_LaterBackwardTickStartsAnotherActivation
+20/97 Test #20: unit_functional.F.R14_LaterBackwardTickStartsAnotherActivation ..................   Passed    0.00 sec
+      Start 21: unit_functional.F.R18_CleanUpForwardFrontStopsSameActivation
+21/97 Test #21: unit_functional.F.R18_CleanUpForwardFrontStopsSameActivation ....................   Passed    0.00 sec
+      Start 22: unit_functional.F.R19_CleanUpForwardContinues
+22/97 Test #22: unit_functional.F.R19_CleanUpForwardContinues ...................................   Passed    0.00 sec
+      Start 23: unit_functional.F.R20_CleanUpForwardEndsDustRemainsFrontStops
+23/97 Test #23: unit_functional.F.R20_CleanUpForwardEndsDustRemainsFrontStops ...................   Passed    0.00 sec
+      Start 24: unit_functional.F.R21_CleanUpForwardRestartsActivationAfterThreeTicks
+24/97 Test #24: unit_functional.F.R21_CleanUpForwardRestartsActivationAfterThreeTicks ...........   Passed    0.00 sec
+      Start 25: unit_functional.F.R22_CleanUpForwardEndsThenTurnLeft
+25/97 Test #25: unit_functional.F.R22_CleanUpForwardEndsThenTurnLeft ............................   Passed    0.00 sec
+      Start 26: unit_functional.F.R23_CleanUpForwardEndsThenTurnRight
+26/97 Test #26: unit_functional.F.R23_CleanUpForwardEndsThenTurnRight ...........................   Passed    0.00 sec
+      Start 27: unit_functional.F.R24_CleanUpForwardEndsThenBackward
+27/97 Test #27: unit_functional.F.R24_CleanUpForwardEndsThenBackward ............................   Passed    0.00 sec
+      Start 28: unit_functional.F.R25_CleanUpForwardEndsEarlyThenForward
+28/97 Test #28: unit_functional.F.R25_CleanUpForwardEndsEarlyThenForward ........................   Passed    0.00 sec
+      Start 29: unit_functional.F.R26_CleanUpStoppedContinues
+29/97 Test #29: unit_functional.F.R26_CleanUpStoppedContinues ...................................   Passed    0.00 sec
+      Start 30: unit_functional.F.R27_CleanUpStoppedNextActivation
+30/97 Test #30: unit_functional.F.R27_CleanUpStoppedNextActivation ..............................   Passed    0.00 sec
+      Start 31: unit_functional.F.R28_CleanUpStoppedThenTurnLeft
+31/97 Test #31: unit_functional.F.R28_CleanUpStoppedThenTurnLeft ................................   Passed    0.00 sec
+      Start 32: unit_functional.F.R29_CleanUpStoppedThenTurnRight
+32/97 Test #32: unit_functional.F.R29_CleanUpStoppedThenTurnRight ...............................   Passed    0.00 sec
+      Start 33: unit_functional.F.R30_CleanUpStoppedThenBackward
+33/97 Test #33: unit_functional.F.R30_CleanUpStoppedThenBackward ................................   Passed    0.00 sec
+      Start 34: unit_functional.F.R31_CleanUpStoppedThenForward
+34/97 Test #34: unit_functional.F.R31_CleanUpStoppedThenForward .................................   Passed    0.00 sec
+      Start 35: unit_functional.F.PR13_CleanOffOnlyWhileTurningOrBackward
+35/97 Test #35: unit_functional.F.PR13_CleanOffOnlyWhileTurningOrBackward .......................   Passed    0.00 sec
+      Start 36: unit_functional.MainFunctional.StartBeginsForwardCleanOn
+36/97 Test #36: unit_functional.MainFunctional.StartBeginsForwardCleanOn ........................   Passed    0.00 sec
+      Start 37: unit_functional.MainFunctional.CycleCapturesBeforeDeciding
+37/97 Test #37: unit_functional.MainFunctional.CycleCapturesBeforeDeciding ......................   Passed    0.00 sec
+      Start 38: unit_functional.MainFunctional.CycleWithoutSamplesStillTicks
+38/97 Test #38: unit_functional.MainFunctional.CycleWithoutSamplesStillTicks ....................   Passed    0.00 sec
+      Start 39: unit_functional.MainFunctional.RunStopsWhenInputEnds
+39/97 Test #39: unit_functional.MainFunctional.RunStopsWhenInputEnds ............................   Passed    0.00 sec
+      Start 40: unit_functional.MainFunctional.RunStopsAtTickLimit
+40/97 Test #40: unit_functional.MainFunctional.RunStopsAtTickLimit ..............................   Passed    0.00 sec
+      Start 41: unit_functional.MainFunctional.RunWithoutSourceDoesNothing
+41/97 Test #41: unit_functional.MainFunctional.RunWithoutSourceDoesNothing ......................   Passed    0.00 sec
+      Start 42: unit_functional.SensorFunctional.InitialValuesAreFalse
+42/97 Test #42: unit_functional.SensorFunctional.InitialValuesAreFalse ..........................   Passed    0.00 sec
+      Start 43: unit_functional.SensorFunctional.UpdateFrontChangesOnlyFront
+43/97 Test #43: unit_functional.SensorFunctional.UpdateFrontChangesOnlyFront ....................   Passed    0.00 sec
+      Start 44: unit_functional.SensorFunctional.UpdateLeftChangesOnlyLeft
+44/97 Test #44: unit_functional.SensorFunctional.UpdateLeftChangesOnlyLeft ......................   Passed    0.00 sec
+      Start 45: unit_functional.SensorFunctional.UpdateRightChangesOnlyRight
+45/97 Test #45: unit_functional.SensorFunctional.UpdateRightChangesOnlyRight ....................   Passed    0.00 sec
+      Start 46: unit_functional.SensorFunctional.UpdateDustChangesOnlyDust
+46/97 Test #46: unit_functional.SensorFunctional.UpdateDustChangesOnlyDust ......................   Passed    0.00 sec
+      Start 47: unit_functional.SensorFunctional.LatestSampleWins
+47/97 Test #47: unit_functional.SensorFunctional.LatestSampleWins ...............................   Passed    0.00 sec
+      Start 48: unit_functional.SensorFunctional.ReadDoesNotModifyStore
+48/97 Test #48: unit_functional.SensorFunctional.ReadDoesNotModifyStore .........................   Passed    0.00 sec
+      Start 49: unit_functional.SensorFunctional.CaptureAppliesOnlyArrivedSamples
+49/97 Test #49: unit_functional.SensorFunctional.CaptureAppliesOnlyArrivedSamples ...............   Passed    0.00 sec
+      Start 50: unit_functional.SensorFunctional.CaptureAppliesAllFourSamples
+50/97 Test #50: unit_functional.SensorFunctional.CaptureAppliesAllFourSamples ...................   Passed    0.00 sec
+      Start 51: unit_functional.SensorFunctional.CaptureWithNothingArrivedKeepsValues
+51/97 Test #51: unit_functional.SensorFunctional.CaptureWithNothingArrivedKeepsValues ...........   Passed    0.00 sec
+      Start 52: unit_functional.TickFunctional.EachCallProducesOneTick
+52/97 Test #52: unit_functional.TickFunctional.EachCallProducesOneTick ..........................   Passed    0.00 sec
+      Start 53: unit_functional.ActuatorFunctional.CommandDirectionSendsDirection
+53/97 Test #53: unit_functional.ActuatorFunctional.CommandDirectionSendsDirection ...............   Passed    0.00 sec
+      Start 54: unit_functional.ActuatorFunctional.CommandCleanerModeSendsClean
+54/97 Test #54: unit_functional.ActuatorFunctional.CommandCleanerModeSendsClean .................   Passed    0.00 sec
+      Start 55: unit_functional.ActuatorFunctional.IssueSendsDirectionThenClean
+55/97 Test #55: unit_functional.ActuatorFunctional.IssueSendsDirectionThenClean .................   Passed    0.00 sec
+      Start 56: unit_functional.ActuatorFunctional.NoPortDropsCommands
+56/97 Test #56: unit_functional.ActuatorFunctional.NoPortDropsCommands ..........................   Passed    0.00 sec
+      Start 57: unit_structural.S.DustDuringTurnFlag_TurnRightDustVsNoDust
+57/97 Test #57: unit_structural.S.DustDuringTurnFlag_TurnRightDustVsNoDust ......................   Passed    0.00 sec
+      Start 58: unit_structural.S.DustDuringTurnFlag_NotSetOutsideTurnStates
+58/97 Test #58: unit_structural.S.DustDuringTurnFlag_NotSetOutsideTurnStates ....................   Passed    0.00 sec
+      Start 59: unit_structural.S.StepForward_FrontTrueVsFalse
+59/97 Test #59: unit_structural.S.StepForward_FrontTrueVsFalse ..................................   Passed    0.00 sec
+      Start 60: unit_structural.S.StepForward_DustTrueVsFalse
+60/97 Test #60: unit_structural.S.StepForward_DustTrueVsFalse ...................................   Passed    0.00 sec
+      Start 61: unit_structural.S.Avoid_FromForward_AllThreeOutcomes
+61/97 Test #61: unit_structural.S.Avoid_FromForward_AllThreeOutcomes ............................   Passed    0.00 sec
+      Start 62: unit_structural.S.Avoid_FromCleanUp_PassesFalseDustFlag
+62/97 Test #62: unit_structural.S.Avoid_FromCleanUp_PassesFalseDustFlag .........................   Passed    0.00 sec
+      Start 63: unit_structural.S.StartTurn_LeftAndRightCommands
+63/97 Test #63: unit_structural.S.StartTurn_LeftAndRightCommands ................................   Passed    0.00 sec
+      Start 64: unit_structural.S.StartCleanup_ForwardAndStopCommands
+64/97 Test #64: unit_structural.S.StartCleanup_ForwardAndStopCommands ...........................   Passed    0.00 sec
+      Start 65: unit_structural.S.StepTurn_CountBelowLimitVsAtLimit
+65/97 Test #65: unit_structural.S.StepTurn_CountBelowLimitVsAtLimit .............................   Passed    0.00 sec
+      Start 66: unit_structural.S.StepTurn_DustFlagTrueVsFalseAtLimit
+66/97 Test #66: unit_structural.S.StepTurn_DustFlagTrueVsFalseAtLimit ...........................   Passed    0.00 sec
+      Start 67: unit_structural.S.StepBackward_AllFourOutcomes
+67/97 Test #67: unit_structural.S.StepBackward_AllFourOutcomes ..................................   Passed    0.00 sec
+      Start 68: unit_structural.S.BackwardPause_McdcPairs
+68/97 Test #68: unit_structural.S.BackwardPause_McdcPairs .......................................   Passed    0.00 sec
+      Start 69: unit_structural.S.Cleanup_ActivationEnded_McdcPairs
+69/97 Test #69: unit_structural.S.Cleanup_ActivationEnded_McdcPairs .............................   Passed    0.00 sec
+      Start 70: unit_structural.S.Cleanup_Continuing_IsForwardAndFront_McdcPairs
+70/97 Test #70: unit_structural.S.Cleanup_Continuing_IsForwardAndFront_McdcPairs ................   Passed    0.00 sec
+      Start 71: unit_structural.S.Cleanup_NextActivation_McdcPairs
+71/97 Test #71: unit_structural.S.Cleanup_NextActivation_McdcPairs ..............................   Passed    0.00 sec
+      Start 72: unit_structural.S.Cleanup_EndedNoDust_FrontVsNoFront
+72/97 Test #72: unit_structural.S.Cleanup_EndedNoDust_FrontVsNoFront ............................   Passed    0.00 sec
+      Start 73: unit_structural.IoStructural.CommandDirection_McdcPairs
+73/97 Test #73: unit_structural.IoStructural.CommandDirection_McdcPairs .........................   Passed    0.00 sec
+      Start 74: unit_structural.IoStructural.CommandCleanerMode_McdcPairs
+74/97 Test #74: unit_structural.IoStructural.CommandCleanerMode_McdcPairs .......................   Passed    0.00 sec
+      Start 75: unit_structural.IoStructural.Capture_EachArrivalDecisionBothWays
+75/97 Test #75: unit_structural.IoStructural.Capture_EachArrivalDecisionBothWays ................   Passed    0.00 sec
+      Start 76: unit_structural.IoStructural.Run_LoopCondition_McdcPairs
+76/97 Test #76: unit_structural.IoStructural.Run_LoopCondition_McdcPairs ........................   Passed    0.00 sec
+      Start 77: system_test.SystemCli.CLI01_ObstacleAvoidanceSequence
+77/97 Test #77: system_test.SystemCli.CLI01_ObstacleAvoidanceSequence ...........................   Passed    0.00 sec
+      Start 78: system_test.SystemCli.CLI02_CleanUpStopThenTurnRight
+78/97 Test #78: system_test.SystemCli.CLI02_CleanUpStopThenTurnRight ............................   Passed    0.00 sec
+      Start 79: system_test.SystemCli.CLI03_BackwardDustPauseThenTurn
+79/97 Test #79: system_test.SystemCli.CLI03_BackwardDustPauseThenTurn ...........................   Passed    0.00 sec
+      Start 80: system_test.SystemCli.CLI04_TickLimitArgument
+80/97 Test #80: system_test.SystemCli.CLI04_TickLimitArgument ...................................   Passed    0.00 sec
+      Start 81: system_test.SystemCli.CLI05_EmptyInput
+81/97 Test #81: system_test.SystemCli.CLI05_EmptyInput ..........................................   Passed    0.00 sec
+      Start 82: system_test.SystemCli.CLI06_InvalidInputRejected
+82/97 Test #82: system_test.SystemCli.CLI06_InvalidInputRejected ................................   Passed    0.01 sec
+      Start 83: system_test.SystemCli.CLI07_InvalidArgument
+83/97 Test #83: system_test.SystemCli.CLI07_InvalidArgument .....................................   Passed    0.01 sec
+      Start 84: system_test.SystemScenario.SYS01_OpenRoomStraightThenLeftTurnAtWall
+84/97 Test #84: system_test.SystemScenario.SYS01_OpenRoomStraightThenLeftTurnAtWall .............   Passed    0.00 sec
+      Start 85: system_test.SystemScenario.SYS02_LeftBlockedTurnsRight
+85/97 Test #85: system_test.SystemScenario.SYS02_LeftBlockedTurnsRight ..........................   Passed    0.00 sec
+      Start 86: system_test.SystemScenario.SYS03_DeadEndBacksUpThenTurnsLeft
+86/97 Test #86: system_test.SystemScenario.SYS03_DeadEndBacksUpThenTurnsLeft ....................   Passed    0.00 sec
+      Start 87: system_test.SystemScenario.SYS04_DustStripRestartsActivationEveryThreeTicks
+87/97 Test #87: system_test.SystemScenario.SYS04_DustStripRestartsActivationEveryThreeTicks .....   Passed    0.00 sec
+      Start 88: system_test.SystemScenario.SYS05_ShortDustEndsActivationEarly
+88/97 Test #88: system_test.SystemScenario.SYS05_ShortDustEndsActivationEarly ...................   Passed    0.00 sec
+      Start 89: system_test.SystemScenario.SYS06_FrontObstacleDuringCleanUpStopsUntilDustGone
+89/97 Test #89: system_test.SystemScenario.SYS06_FrontObstacleDuringCleanUpStopsUntilDustGone ...   Passed    0.00 sec
+      Start 90: system_test.SystemScenario.SYS07_DustWhileBackingUpPausesForOneActivation
+90/97 Test #90: system_test.SystemScenario.SYS07_DustWhileBackingUpPausesForOneActivation .......   Passed    0.00 sec
+      Start 91: system_test.SystemScenario.SYS08_DustDuringTurnFinishesTurnThenCleansUp
+91/97 Test #91: system_test.SystemScenario.SYS08_DustDuringTurnFinishesTurnThenCleansUp .........   Passed    0.00 sec
+      Start 92: system_test.SystemScenario.SYS09_CornerStartTurnsRightImmediately
+92/97 Test #92: system_test.SystemScenario.SYS09_CornerStartTurnsRightImmediately ...............   Passed    0.00 sec
+      Start 93: system_test.SystemScenario.SYS10_EnclosedKeepsBackingUp
+93/97 Test #93: system_test.SystemScenario.SYS10_EnclosedKeepsBackingUp .........................   Passed    0.00 sec
+      Start 94: system_test.SystemScenario.SYS11_InterruptFrontEqualsEveryTickFront
+94/97 Test #94: system_test.SystemScenario.SYS11_InterruptFrontEqualsEveryTickFront .............   Passed    0.00 sec
+      Start 95: system_test.SystemScenario.SYS12_ClutteredRoomHundredTicks
+95/97 Test #95: system_test.SystemScenario.SYS12_ClutteredRoomHundredTicks ......................   Passed    0.00 sec
+      Start 96: system_test.SystemScenario.SYS13_SlowPeriodicSensorsKeepInvariants
+96/97 Test #96: system_test.SystemScenario.SYS13_SlowPeriodicSensorsKeepInvariants ..............   Passed    0.00 sec
+      Start 97: system_test.SystemScenario.SYS14_TickLimitIsHundred
+97/97 Test #97: system_test.SystemScenario.SYS14_TickLimitIsHundred .............................   Passed    0.00 sec
+
+100% tests passed, 0 tests failed out of 97
+
+Total Test time (real) =   0.22 sec
