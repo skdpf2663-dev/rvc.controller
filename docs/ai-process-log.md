@@ -34,3 +34,19 @@
 
 ## 3단계. 커버리지 1회차 → `reports/coverage-1.md`
 - 기능 테스트만으로 Statement 73%, Branch 69%, MC/DC 70%. main.c 0%, controller.c 중복 조건 발견.
+
+## 4단계. 리팩터링 + 구조 테스트 → `reports/coverage-2.md`
+- MC/DC 미충족 11개 중 대부분이 의사코드의 중복 조건이라 테스트로는 채울 수 없다고 판단 →
+  동작 보존 리팩터링 후 controller.c MC/DC 100%. 결정문별 MC/DC 독립 쌍 구조 테스트 20개 추가.
+
+## 5단계. 시스템 테스트 → `reports/coverage-3.md`
+- 10x10 격자 세계(테스트 하네스)에서 실제 제어기를 Main으로 구동하는 시나리오 14개,
+  실행 파일 `rvc` 를 stdin/stdout으로 구동하는 7개. 첫 실행에서 1건 실패 → 원인은 테스트의 기대 문자열 오류, 수정.
+- 최종: 97개 통과, Statement 98.8%, Branch 99.2%, MC/DC 100%. 목표 90% 달성으로 반복 종료.
+- 남은 미커버: controller.c switch default(도달 불가 방어 코드).
+
+## 범위 밖으로 남긴 것
+- 원래 프로젝트의 systemtesting-simulator 스킬이 요구하는 **웹 기반 시뮬레이터**(사람이 PASS/FAIL 판정)는
+  이번 프롬프트(구현 + 커버리지 테스트)의 범위를 넘어 만들지 않음. 대신 `rvc` 실행 파일이 tick마다
+  전체 상태를 한 줄로 출력하므로 시뮬레이터가 실제 C 제어기를 그대로 구동할 수 있게 해 둠.
+- 원래 프로젝트 규칙의 "단계마다 사람 승인"은 PR 리뷰로 대신함. 설계 편차는 module_traceability.md에 정리.
