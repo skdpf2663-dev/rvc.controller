@@ -1,0 +1,40 @@
+{
+  "cli_version": "0.13.4",
+  "checkpoint_id": "01M8DFZNAZNE9K4NDJZX9KFGZ4",
+  "strategy": "manual-commit",
+  "branch": "claude/project-thread-eyvrri",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "src/controller.c"
+  ],
+  "sessions": [
+    {
+      "metadata": "/0/metadata.json",
+      "transcript": "/0/full.jsonl",
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "prompt": ""
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 3,
+    "cache_creation_tokens": 3210,
+    "cache_read_tokens": 342061,
+    "output_tokens": 2873,
+    "api_call_count": 2
+  },
+  "redaction": {
+    "replacements": 97,
+    "layers": {
+      "betterleaks": 0,
+      "connection_string": 0,
+      "credential_key": 0,
+      "credential_value": 0,
+      "credentialed_uri": 0,
+      "entropy": 89,
+      "key_context": 8,
+      "provider_token": 0,
+      "shell_stdin": 0
+    }
+  }
+}
