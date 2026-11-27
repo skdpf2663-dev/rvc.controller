@@ -1,0 +1,53 @@
+{
+  "cli_version": "0.13.4",
+  "checkpoint_id": "01M8E3RJZQAE3A7TEKCV6GAEPG",
+  "strategy": "manual-commit",
+  "branch": "claude/project-thread-eyvrri",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "README.md",
+    "artifacts/SystemTest/requirement_traceability.md",
+    "artifacts/SystemTest/test_results.md",
+    "artifacts/SystemTest/test_scenarios.md",
+    "docs/ai-process-log.md",
+    "simulator/README.md",
+    "simulator/build.sh",
+    "simulator/dist/rvc-simulator.html",
+    "simulator/dist/rvc.wasm",
+    "simulator/gen_docs.js",
+    "simulator/web/index.html",
+    "simulator/web/sim-core.js",
+    "simulator/web/simulator.js",
+    "simulator/web/style.css"
+  ],
+  "sessions": [
+    {
+      "metadata": "/0/metadata.json",
+      "transcript": "/0/full.jsonl",
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "prompt": ""
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 21,
+    "cache_creation_tokens": 24891,
+    "cache_read_tokens": 3238551,
+    "output_tokens": 20903,
+    "api_call_count": 11
+  },
+  "redaction": {
+    "replacements": 160,
+    "layers": {
+      "betterleaks": 0,
+      "connection_string": 0,
+      "credential_key": 0,
+      "credential_value": 0,
+      "credentialed_uri": 0,
+      "entropy": 148,
+      "key_context": 12,
+      "provider_token": 0,
+      "shell_stdin": 0
+    }
+  }
+}
