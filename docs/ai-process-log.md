@@ -24,3 +24,13 @@
 - 원래 프로젝트 스킬(impl-tdd-development)이 요구하는 도구: C11 + GCC, GoogleTest(C++), CMake, CTest.
 - MC/DC 측정: 컨테이너의 gcc 13은 MC/DC를 지원하지 않아 gcc-14(`-fcondition-coverage`)를 설치하고
   gcovr 8.8의 condition 메트릭으로 측정하기로 함.
+
+## 2단계. TDD 구현
+- RED: 명세 기반 기능 테스트 56개 + 빈 스텁 → 53개 실패 확인 (`reports/tdd-red.txt`).
+- GREEN: sensor/capture/tick/actuator → Controller(FSM) → Main 순으로 구현. 56개 모두 통과.
+- 설계 결정(구조도 대비): 하드웨어가 범위 밖(PR-6)이라 CaptureSensorValues는 도착한 샘플 구조체를
+  인자로 받고, CommandDirection/CommandCleanerMode는 콜백 포트로 출력함. Controller_GetStatus()는
+  상태 확인용 읽기 전용 접근자. 자세한 내용은 `artifacts/Implementation/module_traceability.md`.
+
+## 3단계. 커버리지 1회차 → `reports/coverage-1.md`
+- 기능 테스트만으로 Statement 73%, Branch 69%, MC/DC 70%. main.c 0%, controller.c 중복 조건 발견.
