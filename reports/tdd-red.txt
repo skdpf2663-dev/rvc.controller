@@ -1,0 +1,107 @@
+ 1/56 Test  #1: unit_functional.F.R00_InitialStateIsForwardCleanOn ......................***Failed    0.00 sec
+ 2/56 Test  #2: unit_functional.F.R01_ForwardFrontLeftClearTurnsLeft ....................***Failed    0.00 sec
+ 3/56 Test  #3: unit_functional.F.R01_ForwardFrontWithDustRecordsDustDuringTurn .........***Failed    0.00 sec
+ 4/56 Test  #4: unit_functional.F.R02_ForwardFrontLeftBlockedTurnsRight .................***Failed    0.00 sec
+ 5/56 Test  #5: unit_functional.F.R03_ForwardAllBlockedGoesBackward .....................***Failed    0.00 sec
+ 6/56 Test  #6: unit_functional.F.R04_ForwardDustPowersUpCleaning .......................***Failed    0.00 sec
+ 7/56 Test  #7: unit_functional.F.R05_ForwardClearKeepsGoing ............................***Failed    0.00 sec
+ 8/56 Test  #8: unit_functional.F.R01_FrontHasPriorityOverDustInForward .................***Failed    0.00 sec
+ 9/56 Test  #9: unit_functional.F.R06_R08_TurnLeftLastsThreeTicksThenForward ............***Failed    0.00 sec
+10/56 Test #10: unit_functional.F.R07_DustDuringTurnLeftFinishesTurnThenCleanUp .........***Failed    0.00 sec
+11/56 Test #11: unit_functional.F.R07_DustOnCompletionTickSelectsCleanUp ................***Failed    0.00 sec
+12/56 Test #12: unit_functional.F.R09_R11_TurnRightLastsThreeTicksThenForward ...........***Failed    0.00 sec
+13/56 Test #13: unit_functional.F.R10_DustDuringTurnRightThenCleanUp ....................***Failed    0.00 sec
+14/56 Test #14: unit_functional.F.R12_BackwardLeftClearTurnsLeft ........................***Failed    0.00 sec
+15/56 Test #15: unit_functional.F.R13_BackwardRightClearTurnsRight ......................***Failed    0.00 sec
+16/56 Test #16: unit_functional.F.R14_BackwardDustStopsForCleanUp .......................***Failed    0.00 sec
+17/56 Test #17: unit_functional.F.R15_BackwardContinuesWhileSidesBlocked ................***Failed    0.00 sec
+18/56 Test #18: unit_functional.F.R16_R17_BackwardPauseIsOneActivationOfThreeTicks ......***Failed    0.00 sec
+19/56 Test #19: unit_functional.F.R17_BackwardPauseEndsWhenDustGone .....................***Failed    0.00 sec
+20/56 Test #20: unit_functional.F.R14_LaterBackwardTickStartsAnotherActivation ..........***Failed    0.00 sec
+21/56 Test #21: unit_functional.F.R18_CleanUpForwardFrontStopsSameActivation ............***Failed    0.00 sec
+22/56 Test #22: unit_functional.F.R19_CleanUpForwardContinues ...........................***Failed    0.00 sec
+23/56 Test #23: unit_functional.F.R20_CleanUpForwardEndsDustRemainsFrontStops ...........***Failed    0.00 sec
+24/56 Test #24: unit_functional.F.R21_CleanUpForwardRestartsActivationAfterThreeTicks ...***Failed    0.00 sec
+25/56 Test #25: unit_functional.F.R22_CleanUpForwardEndsThenTurnLeft ....................***Failed    0.00 sec
+26/56 Test #26: unit_functional.F.R23_CleanUpForwardEndsThenTurnRight ...................***Failed    0.00 sec
+27/56 Test #27: unit_functional.F.R24_CleanUpForwardEndsThenBackward ....................***Failed    0.00 sec
+28/56 Test #28: unit_functional.F.R25_CleanUpForwardEndsEarlyThenForward ................***Failed    0.00 sec
+29/56 Test #29: unit_functional.F.R26_CleanUpStoppedContinues ...........................***Failed    0.00 sec
+30/56 Test #30: unit_functional.F.R27_CleanUpStoppedNextActivation ......................***Failed    0.00 sec
+31/56 Test #31: unit_functional.F.R28_CleanUpStoppedThenTurnLeft ........................***Failed    0.00 sec
+32/56 Test #32: unit_functional.F.R29_CleanUpStoppedThenTurnRight .......................***Failed    0.00 sec
+33/56 Test #33: unit_functional.F.R30_CleanUpStoppedThenBackward ........................***Failed    0.00 sec
+34/56 Test #34: unit_functional.F.R31_CleanUpStoppedThenForward .........................***Failed    0.00 sec
+36/56 Test #36: unit_functional.MainFunctional.StartBeginsForwardCleanOn ................***Failed    0.00 sec
+37/56 Test #37: unit_functional.MainFunctional.CycleCapturesBeforeDeciding ..............***Failed    0.00 sec
+38/56 Test #38: unit_functional.MainFunctional.CycleWithoutSamplesStillTicks ............***Failed    0.00 sec
+39/56 Test #39: unit_functional.MainFunctional.RunStopsWhenInputEnds ....................***Failed    0.00 sec
+40/56 Test #40: unit_functional.MainFunctional.RunStopsAtTickLimit ......................***Failed    0.00 sec
+41/56 Test #41: unit_functional.MainFunctional.RunWithoutSourceDoesNothing ..............***Failed    0.00 sec
+43/56 Test #43: unit_functional.SensorFunctional.UpdateFrontChangesOnlyFront ............***Failed    0.00 sec
+44/56 Test #44: unit_functional.SensorFunctional.UpdateLeftChangesOnlyLeft ..............***Failed    0.00 sec
+45/56 Test #45: unit_functional.SensorFunctional.UpdateRightChangesOnlyRight ............***Failed    0.00 sec
+46/56 Test #46: unit_functional.SensorFunctional.UpdateDustChangesOnlyDust ..............***Failed    0.00 sec
+47/56 Test #47: unit_functional.SensorFunctional.LatestSampleWins .......................***Failed    0.00 sec
+48/56 Test #48: unit_functional.SensorFunctional.ReadDoesNotModifyStore .................***Failed    0.00 sec
+49/56 Test #49: unit_functional.SensorFunctional.CaptureAppliesOnlyArrivedSamples .......***Failed    0.00 sec
+50/56 Test #50: unit_functional.SensorFunctional.CaptureAppliesAllFourSamples ...........***Failed    0.00 sec
+51/56 Test #51: unit_functional.SensorFunctional.CaptureWithNothingArrivedKeepsValues ...***Failed    0.00 sec
+52/56 Test #52: unit_functional.TickFunctional.EachCallProducesOneTick ..................***Failed    0.00 sec
+53/56 Test #53: unit_functional.ActuatorFunctional.CommandDirectionSendsDirection .......***Failed    0.00 sec
+54/56 Test #54: unit_functional.ActuatorFunctional.CommandCleanerModeSendsClean .........***Failed    0.00 sec
+55/56 Test #55: unit_functional.ActuatorFunctional.IssueSendsDirectionThenClean .........***Failed    0.00 sec
+5% tests passed, 53 tests failed out of 56
+	  1 - unit_functional.F.R00_InitialStateIsForwardCleanOn (Failed)
+	  2 - unit_functional.F.R01_ForwardFrontLeftClearTurnsLeft (Failed)
+	  3 - unit_functional.F.R01_ForwardFrontWithDustRecordsDustDuringTurn (Failed)
+	  4 - unit_functional.F.R02_ForwardFrontLeftBlockedTurnsRight (Failed)
+	  5 - unit_functional.F.R03_ForwardAllBlockedGoesBackward (Failed)
+	  6 - unit_functional.F.R04_ForwardDustPowersUpCleaning (Failed)
+	  7 - unit_functional.F.R05_ForwardClearKeepsGoing (Failed)
+	  8 - unit_functional.F.R01_FrontHasPriorityOverDustInForward (Failed)
+	  9 - unit_functional.F.R06_R08_TurnLeftLastsThreeTicksThenForward (Failed)
+	 10 - unit_functional.F.R07_DustDuringTurnLeftFinishesTurnThenCleanUp (Failed)
+	 11 - unit_functional.F.R07_DustOnCompletionTickSelectsCleanUp (Failed)
+	 12 - unit_functional.F.R09_R11_TurnRightLastsThreeTicksThenForward (Failed)
+	 13 - unit_functional.F.R10_DustDuringTurnRightThenCleanUp (Failed)
+	 14 - unit_functional.F.R12_BackwardLeftClearTurnsLeft (Failed)
+	 15 - unit_functional.F.R13_BackwardRightClearTurnsRight (Failed)
+	 16 - unit_functional.F.R14_BackwardDustStopsForCleanUp (Failed)
+	 17 - unit_functional.F.R15_BackwardContinuesWhileSidesBlocked (Failed)
+	 18 - unit_functional.F.R16_R17_BackwardPauseIsOneActivationOfThreeTicks (Failed)
+	 19 - unit_functional.F.R17_BackwardPauseEndsWhenDustGone (Failed)
+	 20 - unit_functional.F.R14_LaterBackwardTickStartsAnotherActivation (Failed)
+	 21 - unit_functional.F.R18_CleanUpForwardFrontStopsSameActivation (Failed)
+	 22 - unit_functional.F.R19_CleanUpForwardContinues (Failed)
+	 23 - unit_functional.F.R20_CleanUpForwardEndsDustRemainsFrontStops (Failed)
+	 24 - unit_functional.F.R21_CleanUpForwardRestartsActivationAfterThreeTicks (Failed)
+	 25 - unit_functional.F.R22_CleanUpForwardEndsThenTurnLeft (Failed)
+	 26 - unit_functional.F.R23_CleanUpForwardEndsThenTurnRight (Failed)
+	 27 - unit_functional.F.R24_CleanUpForwardEndsThenBackward (Failed)
+	 28 - unit_functional.F.R25_CleanUpForwardEndsEarlyThenForward (Failed)
+	 29 - unit_functional.F.R26_CleanUpStoppedContinues (Failed)
+	 30 - unit_functional.F.R27_CleanUpStoppedNextActivation (Failed)
+	 31 - unit_functional.F.R28_CleanUpStoppedThenTurnLeft (Failed)
+	 32 - unit_functional.F.R29_CleanUpStoppedThenTurnRight (Failed)
+	 33 - unit_functional.F.R30_CleanUpStoppedThenBackward (Failed)
+	 34 - unit_functional.F.R31_CleanUpStoppedThenForward (Failed)
+	 36 - unit_functional.MainFunctional.StartBeginsForwardCleanOn (Failed)
+	 37 - unit_functional.MainFunctional.CycleCapturesBeforeDeciding (Failed)
+	 38 - unit_functional.MainFunctional.CycleWithoutSamplesStillTicks (Failed)
+	 39 - unit_functional.MainFunctional.RunStopsWhenInputEnds (Failed)
+	 40 - unit_functional.MainFunctional.RunStopsAtTickLimit (Failed)
+	 41 - unit_functional.MainFunctional.RunWithoutSourceDoesNothing (Failed)
+	 43 - unit_functional.SensorFunctional.UpdateFrontChangesOnlyFront (Failed)
+	 44 - unit_functional.SensorFunctional.UpdateLeftChangesOnlyLeft (Failed)
+	 45 - unit_functional.SensorFunctional.UpdateRightChangesOnlyRight (Failed)
+	 46 - unit_functional.SensorFunctional.UpdateDustChangesOnlyDust (Failed)
+	 47 - unit_functional.SensorFunctional.LatestSampleWins (Failed)
+	 48 - unit_functional.SensorFunctional.ReadDoesNotModifyStore (Failed)
+	 49 - unit_functional.SensorFunctional.CaptureAppliesOnlyArrivedSamples (Failed)
+	 50 - unit_functional.SensorFunctional.CaptureAppliesAllFourSamples (Failed)
+	 51 - unit_functional.SensorFunctional.CaptureWithNothingArrivedKeepsValues (Failed)
+	 52 - unit_functional.TickFunctional.EachCallProducesOneTick (Failed)
+	 53 - unit_functional.ActuatorFunctional.CommandDirectionSendsDirection (Failed)
+	 54 - unit_functional.ActuatorFunctional.CommandCleanerModeSendsClean (Failed)
+	 55 - unit_functional.ActuatorFunctional.IssueSendsDirectionThenClean (Failed)
