@@ -11,3 +11,16 @@
 - SD 산출물 위치 확인: 사용자 PC의 `261030_RVC_SASD_Claude` 폴더에는 AGENTS.md와 `.claude/skills`만 있고
   `artifacts/SA`, `artifacts/SD`, `preliminary_requirements.md`는 없음. AGENTS.md 규칙("Do not invent requirements")에
   따라 사용자에게 SD 산출물을 요청함.
+
+## 1단계. SD 산출물 확보 및 분석
+- 다른 스레드가 사용자 PC의 `C:\Users\user\Downloads\RVC_SASD\RVC_SASD_CLAUDE` 에서 SA/SD 산출물을 찾아 복사해 줌.
+  저장소의 `artifacts/SA`, `artifacts/SD`, `docs/preliminary_requirements.md` 로 그대로 가져옴(수정 없음).
+- 읽은 순서: preliminary_requirements → SD/structure_chart → SD/transform_analysis → SA/DFD/dfd_level_4_fsm →
+  SA/process_specification(2.2.2 의사코드) → data_dictionary.
+- 구조도 모듈 12개: Main, GenerateTick, CaptureSensorValues, UpdateFront/Left/Right/DustSensor,
+  ReadLatestSensorValues, Controller, IssueActuatorCommands, CommandDirection, CommandCleanerMode.
+- Controller = Level 4 FSM (상태 7개: Forward, CleanUpForward, CleanUpStopped, TurnLeft, TurnRight, Backward,
+  CleanUpBackwardPause). 내부 변수 turn_count, cleanup_count, dust_during_turn.
+- 원래 프로젝트 스킬(impl-tdd-development)이 요구하는 도구: C11 + GCC, GoogleTest(C++), CMake, CTest.
+- MC/DC 측정: 컨테이너의 gcc 13은 MC/DC를 지원하지 않아 gcc-14(`-fcondition-coverage`)를 설치하고
+  gcovr 8.8의 condition 메트릭으로 측정하기로 함.
