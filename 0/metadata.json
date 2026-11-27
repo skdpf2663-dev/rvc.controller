@@ -1,0 +1,49 @@
+{
+  "cli_version": "0.13.4",
+  "checkpoint_id": "01M8DFYXGV3GN91QGH6XQK82NB",
+  "session_id": "4523ad41-1270-5a03-8e95-fd2d753a8ea1",
+  "strategy": "manual-commit",
+  "created_at": "2026-11-27T03:14:41.519493777Z",
+  "branch": "claude/project-thread-eyvrri",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "src/actuator.c",
+    "src/capture_sensor_values.c",
+    "src/generate_tick.c",
+    "src/sensor_store.c"
+  ],
+  "agent": "Claude Code",
+  "model": "claude-opus-5-5",
+  "turn_id": "be26088dd1b7",
+  "checkpoint_transcript_start": 272,
+  "transcript_lines_at_start": 272,
+  "compact_transcript_start": 49,
+  "token_usage": {
+    "input_tokens": 6,
+    "cache_creation_tokens": 2980,
+    "cache_read_tokens": 506176,
+    "output_tokens": 1905,
+    "api_call_count": 3
+  },
+  "session_token_usage": {
+    "input_tokens": 74,
+    "cache_creation_tokens": 124157,
+    "cache_read_tokens": 4635391,
+    "output_tokens": 34902,
+    "api_call_count": 39
+  },
+  "redaction": {
+    "replacements": 95,
+    "layers": {
+      "betterleaks": 0,
+      "connection_string": 0,
+      "credential_key": 0,
+      "credential_value": 0,
+      "credentialed_uri": 0,
+      "entropy": 87,
+      "key_context": 8,
+      "provider_token": 0,
+      "shell_stdin": 0
+    }
+  }
+}
