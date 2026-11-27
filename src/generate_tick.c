@@ -1,4 +1,20 @@
+/* GenerateTick (SA Process 2.1). The physical tick interval is TBD in the
+ * requirements, so a call stands for one elapsed tick. */
 #include "generate_tick.h"
-void GenerateTick_Reset(void) {}
-void GenerateTick(void) {}
-unsigned long GenerateTick_Count(void) { return 0; }
+
+static unsigned long tick_count = 0UL;
+
+void GenerateTick_Reset(void)
+{
+    tick_count = 0UL;
+}
+
+void GenerateTick(void)
+{
+    tick_count++;
+}
+
+unsigned long GenerateTick_Count(void)
+{
+    return tick_count;
+}
