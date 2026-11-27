@@ -1,0 +1,62 @@
+{
+  "cli_version": "0.13.4",
+  "checkpoint_id": "01M8DFY938CQMGVPD00WXAK9CR",
+  "strategy": "manual-commit",
+  "branch": "claude/project-thread-eyvrri",
+  "checkpoints_count": 1,
+  "files_touched": [
+    ".gitignore",
+    "CMakeLists.txt",
+    "include/actuator.h",
+    "include/capture_sensor_values.h",
+    "include/controller.h",
+    "include/generate_tick.h",
+    "include/rvc_main.h",
+    "include/rvc_types.h",
+    "include/sensor_store.h",
+    "reports/tdd-red.txt",
+    "src/actuator.c",
+    "src/capture_sensor_values.c",
+    "src/controller.c",
+    "src/generate_tick.c",
+    "src/main.c",
+    "src/rvc_main.c",
+    "src/sensor_store.c",
+    "tests/support/actuator_spy.h",
+    "tests/support/controller_fixture.h",
+    "tests/unit/functional/test_controller_fsm.cpp",
+    "tests/unit/functional/test_main.cpp",
+    "tests/unit/functional/test_sensor_capture.cpp",
+    "tests/unit/functional/test_tick_actuator.cpp"
+  ],
+  "sessions": [
+    {
+      "metadata": "/0/metadata.json",
+      "transcript": "/0/full.jsonl",
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "prompt": ""
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 13,
+    "cache_creation_tokens": 21631,
+    "cache_read_tokens": 1067926,
+    "output_tokens": 20489,
+    "api_call_count": 7
+  },
+  "redaction": {
+    "replacements": 87,
+    "layers": {
+      "betterleaks": 0,
+      "connection_string": 0,
+      "credential_key": 0,
+      "credential_value": 0,
+      "credentialed_uri": 0,
+      "entropy": 79,
+      "key_context": 8,
+      "provider_token": 0,
+      "shell_stdin": 0
+    }
+  }
+}
